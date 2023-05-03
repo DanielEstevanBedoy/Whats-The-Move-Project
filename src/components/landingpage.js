@@ -1,1 +1,1 @@
-import "./landingnppage.css"
+import "./landing.css"
