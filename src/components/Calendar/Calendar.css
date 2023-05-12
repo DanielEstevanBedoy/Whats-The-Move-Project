@@ -1,0 +1,19 @@
+.grid-container {
+    margin-left: 15%;
+    margin-right: 10%;
+    width: 80%;
+    height: 80%;
+    display: grid;
+    border: black solid 1px;
+    grid-template-rows: 70%;
+    grid-template-columns: repeat(7, 13%);
+    gap: 1%;
+}
+
+.grid-item {
+    
+}
+
+.grid-row {
+    list-style-type: none;
+}
