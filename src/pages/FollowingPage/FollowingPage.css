@@ -1,0 +1,16 @@
+.profileList {
+    position: relative;
+    margin-left: 10%;
+    margin-right: 2%;
+    text-align: left;
+    list-style-type: none;
+}
+
+.profile {
+    position: relative;
+    padding-top: 2.5%;
+    padding-bottom: 2.5%;
+    padding-left: 5%;
+    border-top: solid black 1px;
+    border-bottom: solid black 1px;
+}
