@@ -6,10 +6,12 @@ import './App.css';
 import HomePage from './pages/HomePage/HomePage.js';
 import CalendarPage from './pages/CalendarPage/Calendar';
 import FollowingPage from './pages/FollowingPage/FollowingPage';
+import { Auth } from './pages/SignUpPage/SignUpPage';
 
 function App() {
   return (
     <div className="App">
+      <Auth />
       <BrowserRouter>
       <Sidebar/>
       <Routes>
