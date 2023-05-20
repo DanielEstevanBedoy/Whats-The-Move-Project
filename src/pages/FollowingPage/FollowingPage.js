@@ -3,7 +3,7 @@ import './FollowingPage.css'
 function FollowingPage(){
     return(
     <>
-        <h1>FollowingPage</h1>
+        <h1 className="title">FollowingPage</h1>
         <Following />
     </>
     );
