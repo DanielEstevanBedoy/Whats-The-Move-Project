@@ -4,14 +4,18 @@ import Sidebar from './components/SideBar/SideBar';
 import './App.css';
 
 import HomePage from './pages/HomePage/HomePage.js';
-import CalendarPage from './pages/CalendarPage/Calendar';
+import CalendarPage from './pages/CalendarPage/CalendarPage';
 import FollowingPage from './pages/FollowingPage/FollowingPage';
 
+// 
+import { getMonth } from './util'
+
 function App() {
+  // console.table(getMonth(5))
   return (
     <div className="App">
       <BrowserRouter>
-      <Sidebar/>
+      {/* <Sidebar/> */}
       <Routes>
         <Route path='/' element={<HomePage/>}></Route>
         <Route path='/CalendarPage' element={<CalendarPage/>}></Route>
