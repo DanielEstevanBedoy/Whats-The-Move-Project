@@ -11,6 +11,7 @@ import Login from './pages/Login/login';
 
 import {useAuthState} from 'react-firebase-hooks/auth';
 import {auth} from "../src/utils/firebase"
+import Dashboard from './components/dashboard';
 //import {}// 
 //import { getMonth } from './util'
 
@@ -24,21 +25,19 @@ function App() {
    
 <div>
     {!user&&(
-
-
+      <div>
       <h1> You have not signed in</h1>
+      <Login/>
+      </div>
+
     )
     }
     </div>
-    <Login/>
     {user&&(
       <div>
-        <h2>You have signed in</h2>
-        <h2>{user.displayName}</h2>
-        </div>
 
-
-
+        <Dashboard/>
+     </div>
 
     )}
 
