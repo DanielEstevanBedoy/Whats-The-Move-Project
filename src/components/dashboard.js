@@ -1,5 +1,5 @@
 import CalendarPage from "../pages/CalendarPage/CalendarPage";
-import Friends from "../pages/friends";
+import Friends from "../pages/Friend/friends";
 import Events from "../pages/Events/Events";
 import {auth} from "../utils/firebase";
 import {useAuthState} from 'react-firebase-hooks/auth';
