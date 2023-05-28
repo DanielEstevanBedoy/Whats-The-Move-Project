@@ -3,10 +3,6 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Sidebar from './components/SideBar/SideBar';
 import './App.css';
 
-import Layout from '../src/components/Layout'
-import HomePage from './pages/HomePage/HomePage.js';
-import CalendarPage from './pages/CalendarPage/CalendarPage';
-import FollowingPage from './pages/FollowingPage/FollowingPage';
 import Login from './pages/Login/login';
 
 import {useAuthState} from 'react-firebase-hooks/auth';

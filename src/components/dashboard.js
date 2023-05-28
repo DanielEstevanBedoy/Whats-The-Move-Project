@@ -3,20 +3,39 @@ import Friends from "../pages/friends";
 import Events from "../pages/Events/Events";
 import {auth} from "../utils/firebase";
 import {useAuthState} from 'react-firebase-hooks/auth';
+import { BrowserRouter, Route, Routes, Link, useNavigate } from 'react-router-dom';
+import './dashboard.css';
 import Login from "../pages/Login/login";
 
+function AuthWrapper({children}){
+    const [user,loading] = useAuthState(auth);
 
-import { BrowserRouter, Route, Routes, Link } from 'react-router-dom';
-import './dashboard.css';
+const navigate = useNavigate();
+if(loading){
+    return <h1>Loading...</h1>;
+}
+if(!user){
+    navigate('/login');
+    return null;
+}
+return children;
+}
+
+
+
+
+
 
 export default function Dashboard(){
 
-    const [user, loading] = useAuthState(auth);
+    const [user,loading] = useAuthState(auth);
+
 
     return(
         <div className="dashboard">
             <div className="header">
-                <h2>Dashboard component: You have signed in {user.displayName}</h2>
+                <h2>Dashboard component: You have signed in {user.displayName} </h2>
+                <button onClick={()=> auth.signOut()} className="signout-button">Sign out</button>
             </div>
             <BrowserRouter>
                 <nav className="navbar">
@@ -28,6 +47,7 @@ export default function Dashboard(){
                     <Route path="/CalendarPage" element={<CalendarPage />} />
                     <Route path="/Friends" element={<Friends/>} />
                     <Route path="/Events" element={<Events/>} />
+                    <Route path="/login" element={<Login/>} />
                 </Routes>  
             </BrowserRouter>
         </div>
