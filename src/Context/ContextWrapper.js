@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import GlobalContext from "./GlobalContext";
-import dayjs from "daysjs";
+import dayjs from "dayjs";
 /* These values are now accessible by the useContext hook */
 
 export default function ContextWrapper(props) {
