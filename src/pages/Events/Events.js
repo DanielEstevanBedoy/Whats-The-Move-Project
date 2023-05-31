@@ -11,7 +11,7 @@ export default function Test() {
 	const events = savedEvents.filter(
 	    (event) => dayjs(event.day).format("YYYYMMDD") < day.format("YYYYMMDD")
 	);
-//	events.sort();
+	events.sort( compare );
 	setPastEvents(events);
     }, [day]);
     
@@ -22,7 +22,7 @@ export default function Test() {
 	    <h1 className="flex flex-col items-center"> Events </h1>
 	    {pastEvents.map((event, index) => (
 	    <div key={index}>
-		{event.title}
+		{event.title} {dayjs(event.day).format("MM-DD-YYYY")}
 	    </div>
 	    ))}
 	</>
@@ -30,7 +30,11 @@ export default function Test() {
 	);
 }
 
-//function compare( a, b )
-//{
-    
-//}
+function compare( a, b )
+{
+    if (a.day < b.day)
+	return 1;
+    if (a.day > b.day)
+	return -1;
+    return 0;
+}
