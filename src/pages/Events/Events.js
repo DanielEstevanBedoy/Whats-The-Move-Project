@@ -3,15 +3,24 @@ import GlobalContext from "../../Context/GlobalContext";
 import dayjs from "dayjs";
 
 
-export default function Test() {
+export default function EventPage() {
+    return (
+	<>
+	    <Test lookForward={false} />
+	    <Test lookForward={true} />
+	</>
+    );
+}
+
+function Test({ lookForward }) {
     const [pastEvents, setPastEvents] = useState([]);
     const {savedEvents} = useContext(GlobalContext);
     const day = dayjs();
     useEffect(() => {
 	const events = savedEvents.filter(
-	    (event) => dayjs(event.day).format("YYYYMMDD") < day.format("YYYYMMDD")
-	);
-	events.sort( compare );
+	    (event) => ((!lookForward) ? (dayjs(event.day).format("YYYYMMDD") < day.format("YYYYMMDD")) : (dayjs(event.day).format("YYYYMMDD") >= day.format("YYYYMMDD") )
+		       ));
+	events.sort(((lookForward) ? compareLT : compareGT));
 	setPastEvents(events);
     }, [day]);
     
@@ -19,7 +28,7 @@ export default function Test() {
     
     return (
 	<>
-	    <h1 className="flex flex-col items-center"> Events </h1>
+	    <h1 className="flex flex-col items-center"> {(!lookForward) ? "Past Events": "Upcoming Events"} </h1>
 	    {pastEvents.map((event, index) => (
 	    <div key={index}>
 		{event.title} {dayjs(event.day).format("MM-DD-YYYY")}
@@ -30,7 +39,7 @@ export default function Test() {
 	);
 }
 
-function compare( a, b )
+function compareGT( a, b )
 {
     if (a.day < b.day)
 	return 1;
@@ -38,3 +47,9 @@ function compare( a, b )
 	return -1;
     return 0;
 }
+
+function compareLT( a, b )
+{
+    return -(compareGT(a, b));
+}
+    
