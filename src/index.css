@@ -1,6 +1,3 @@
-/* Not sure if we have to include these import statements. 
-Sometimes I'll have to comment it in/out to get things to work the way I want them to 
-— this is not ideal! */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
