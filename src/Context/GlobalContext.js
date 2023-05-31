@@ -4,6 +4,8 @@ const GlobalContext = React.createContext(
 {
     monthIndex: 0,
     setMonthIndex: () => {},
+    daySelected: null,
+    setDaySelected: (day) => {},
     showEventForm: false,
     setShowEventForm: () => {}
 })

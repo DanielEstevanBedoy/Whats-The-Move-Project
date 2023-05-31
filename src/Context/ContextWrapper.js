@@ -10,12 +10,16 @@ export default function ContextWrapper(props) {
    * We must store our state somewhere. 
    */
   const [monthIndex, setMonthIndex] = useState(dayjs().month());
+  const [daySelected, setDaySelected] = useState(dayjs());
   const [showEventForm, setShowEventForm] = useState(false);
+
   return (
     <GlobalContext.Provider
       value={{
         monthIndex,
         setMonthIndex,
+        daySelected,
+        setDaySelected,
         showEventForm,
         setShowEventForm,
       }}
