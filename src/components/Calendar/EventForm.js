@@ -3,7 +3,7 @@ import GlobalContext from "../../Context/GlobalContext";
 
 const labels = ["gray", "blue", "indigo", "green", "red", "purple"];
 
-const colorMap = {
+const colorMap500 = {
   gray: "bg-gray-500",
   blue: "bg-blue-500",
   indigo: "bg-indigo-500",
@@ -13,11 +13,18 @@ const colorMap = {
 };
 
 export default function EventForm() {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [selectedLabel, setSelectedLabel] = useState("gray");
+  const { setShowEventForm, daySelected, dispatchEvent, selectedEvent } =
+    useContext(GlobalContext);
 
-  const { setShowEventForm, daySelected } = useContext(GlobalContext);
+  const [title, setTitle] = useState(selectedEvent ? selectedEvent.title : "");
+  const [description, setDescription] = useState(
+    selectedEvent ? selectedEvent.description : ""
+  );
+  const [selectedLabel, setSelectedLabel] = useState(
+    selectedEvent
+      ? labels.find((lbl) => lbl === selectedEvent.label)
+      : labels[0]
+  );
 
   const dayOfTheWeek = daySelected.format("d");
 
@@ -46,18 +53,55 @@ export default function EventForm() {
       formPositionClasses = "justify-end right-11.7";
       break;
   }
+
+  function handleSubmit(event) {
+    event.preventDefault(); // disable page reload
+    const calendarEvent = {
+      title,
+      description,
+      label: selectedLabel,
+      day: daySelected.valueOf(),
+      id: selectedEvent ? selectedEvent.id : Date.now(),
+    };
+
+    if (selectedEvent)
+      dispatchEvent({ type: "UPDATE_EVENT", payload: calendarEvent });
+    else dispatchEvent({ type: "ADD_EVENT", payload: calendarEvent });
+    setShowEventForm(false);
+  }
+
   return (
     <div
-      className={"h-screen w-full fixed top-0 flex items-center " + formPositionClasses}
+      className={
+        "h-screen w-full fixed top-0 flex items-center " + formPositionClasses
+      }
     >
       <form className="bg-white rounded-lg shadow-2x w-1/4">
         <header className="bg-gray-100 px-4 py-2 flex justify-between items-center">
           <span className="material-icons-outlined text-gray-400">
             drag_handle
           </span>
-          <button onClick={() => setShowEventForm(false)}>
-            <span className="material-icons-outlined text-gray-400">close</span>
-          </button>
+          <div>
+            {selectedEvent && (
+              <span
+                onClick={() => {
+                  dispatchEvent({
+                    type: "REMOVE_EVENT",
+                    payload: selectedEvent,
+                  });
+                  setShowEventForm(false);
+                }}
+                className="material-icons-outlined text-gray-400 cursor-pointer"
+              >
+                delete
+              </span>
+            )}
+            <button onClick={() => setShowEventForm(false)}>
+              <span className="material-icons-outlined text-gray-400">
+                close
+              </span>
+            </button>
+          </div>
         </header>
         <div className="p-3">
           <div className="grid grid-cols-1/5 items-end gap-y-7">
@@ -97,7 +141,7 @@ export default function EventForm() {
                   key={i}
                   onClick={() => setSelectedLabel(lbl)}
                   className={
-                    colorMap[lbl] +
+                    colorMap500[lbl] +
                     " w-6 h-6 rounded-full flex items-center justify-center cursor-pointer"
                   }
                 >
@@ -115,6 +159,7 @@ export default function EventForm() {
           <button
             type="submit"
             className="bg-blue-500 hover:bg-blue-600 px-6 py-2 rounded text-white"
+            onClick={handleSubmit}
           >
             Save
           </button>
