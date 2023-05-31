@@ -2,17 +2,7 @@ import React, { useContext, useEffect,  useState } from "react";
 import GlobalContext from "../../Context/GlobalContext";
 import dayjs from "dayjs";
 
-
-export default function EventPage() {
-    return (
-	<>
-	    <Test lookForward={false} />
-	    <Test lookForward={true} />
-	</>
-    );
-}
-
-function Test({ lookForward }) {
+export default function Events({ lookForward }) {
     const [pastEvents, setPastEvents] = useState([]);
     const {savedEvents} = useContext(GlobalContext);
     const day = dayjs();
