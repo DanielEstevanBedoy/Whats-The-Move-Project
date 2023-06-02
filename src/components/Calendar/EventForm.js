@@ -1,5 +1,7 @@
 import React, { useState, useContext } from "react";
 import GlobalContext from "../../Context/GlobalContext";
+import { auth, db } from '../../utils/firebase';
+import { ref, set, push, onValue } from 'firebase/database';
 
 const labels = ["gray", "blue", "indigo", "green", "red", "purple"];
 
@@ -17,14 +19,8 @@ export default function EventForm() {
     useContext(GlobalContext);
 
   const [title, setTitle] = useState(selectedEvent ? selectedEvent.title : "");
-  const [description, setDescription] = useState(
-    selectedEvent ? selectedEvent.description : ""
-  );
-  const [selectedLabel, setSelectedLabel] = useState(
-    selectedEvent
-      ? labels.find((lbl) => lbl === selectedEvent.label)
-      : labels[0]
-  );
+  const [description, setDescription] = useState(selectedEvent ? selectedEvent.description : "");
+  const [selectedLabel, setSelectedLabel] = useState(selectedEvent ? labels.find((lbl) => lbl === selectedEvent.label) : labels[0]);
 
   const dayOfTheWeek = daySelected.format("d");
 
@@ -56,17 +52,34 @@ export default function EventForm() {
 
   function handleSubmit(event) {
     event.preventDefault(); // disable page reload
+    const currentUser = auth.currentUser;
+    const eventId = selectedEvent ? selectedEvent.id : push(ref(db, `Users/${currentUser.uid}/Events`)).key; 
     const calendarEvent = {
       title,
       description,
       label: selectedLabel,
       day: daySelected.valueOf(),
-      id: selectedEvent ? selectedEvent.id : Date.now(),
+      id: eventId,
     };
+    
+    set(ref(db, `Users/${currentUser.uid}/Events/${eventId}`), calendarEvent)
+    .then(() => {
+      console.log('Event created successfully!');
+      setTitle('');
+      setDescription('');
+      setSelectedLabel(labels[0]);
+    })
+    .catch((error) => {
+      console.error('Error creating event:', error);
+    });
+
 
     if (selectedEvent)
       dispatchEvent({ type: "UPDATE_EVENT", payload: calendarEvent });
     else dispatchEvent({ type: "ADD_EVENT", payload: calendarEvent });
+
+    // Shouldn't need to check if user is logged in, because user can only create events if logged in
+
     setShowEventForm(false);
   }
 
