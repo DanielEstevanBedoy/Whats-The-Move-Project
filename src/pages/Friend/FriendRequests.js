@@ -1,42 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import {useAuthState} from 'react-firebase-hooks/auth';
-import { getDatabase, ref, onValue } from "firebase/database";
-import { db, auth } from '../../utils/firebase';
-
+import { useAuth } from './AuthContext';
+import { db } from '../../utils/firebase';
 
 function FriendRequests() {
-  const [user, loading] = useAuthState(auth); // useAuthState should return user
-  const [friendRequests, setFriendRequests] = useState([]);
-  const db = getDatabase();
+  const { currentUser } = useAuth();
+  const [requests, setRequests] = useState([]);
 
   useEffect(() => {
-    if(user) {
-      const friendRequestsRef = ref(db, `friendRequests/${user.uid}`);
-      const unsubscribe = onValue(friendRequestsRef, (snapshot) => {
+    if (currentUser) {
+      const email = currentUser.email.replace('.', ',');
+      const friendRequestsRef = db.ref(`friendRequests/${email}`);
+      friendRequestsRef.on('value', (snapshot) => {
         const data = snapshot.val();
-        const friendRequests = [];
-        for (let id in data) {
-          friendRequests.push({
-            requestId: id,
-            ...data[id],
-          });
+        const requestsArray = [];
+        for (let key in data) {
+          requestsArray.push(data[key]);
         }
-        setFriendRequests(friendRequests);
+        setRequests(requestsArray);
       });
-
-      // remember to unsubscribe from the database when the component unmounts
-      return () => unsubscribe();
     }
-  }, [user, db]);
+  }, [currentUser]);
 
   return (
     <div>
       <h1>Friend Requests</h1>
-      {friendRequests.map((request) => (
-        <div key={request.requestId}>
-          <p>{request.from.email} wants to be your friend.</p>
-          <button>Accept</button>
-          <button>Decline</button>
+      {requests.map((request, index) => (
+        <div key={index}>
+          <p>From: {request.from}</p>
+          <p>Status: {request.status}</p>
         </div>
       ))}
     </div>

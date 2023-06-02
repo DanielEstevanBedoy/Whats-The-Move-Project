@@ -1,33 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import {useAuthState} from 'react-firebase-hooks/auth';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import { db, auth } from '../../utils/firebase';
-import { getDatabase, ref, onValue } from "firebase/database";
+import { ref, onValue } from 'firebase/database';
 
 function CurrentFriends() {
   const [user, loading] = useAuthState(auth);
-  
   const [currentFriends, setCurrentFriends] = useState([]);
-  const db = getDatabase();
 
   useEffect(() => {
-    if (user) {  // check if user exists
-      const friendsRef = ref(db, `friends/${user.uid}`);
-      const unsubscribe = onValue(friendsRef, (snapshot) => {
-        const data = snapshot.val();
+    if(user) {
+      const friendsRef = ref(db, 'Friends');
+      onValue(friendsRef, (snapshot) => {
         const friends = [];
-        for (let id in data) {
-          friends.push({
-            friendId: id,
-            ...data[id],
-          });
-        }
+        snapshot.forEach((childSnapshot) => {
+          const friend = childSnapshot.val();
+          if (friend.user1 === auth.currentUser.uid || friend.user2 === auth.currentUser.uid) {
+            friends.push(friend);
+          }
+        });
         setCurrentFriends(friends);
       });
-
-      // remember to unsubscribe from the database when the component unmounts
-      return () => unsubscribe();
     }
-  }, [user, db]);
+  }, [user]);
 
   return (
     <div>
