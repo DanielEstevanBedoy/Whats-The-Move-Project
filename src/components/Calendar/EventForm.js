@@ -65,8 +65,8 @@ export default function EventForm() {
     };
 
     if (selectedEvent)
-      dispatchEvent({ type: "UPDATE_EVENT", payload: calendarEvent });
-    else dispatchEvent({ type: "ADD_EVENT", payload: calendarEvent });
+      dispatchEvent({ type: "UPDATE_EVENT", eventData: calendarEvent });
+    else dispatchEvent({ type: "ADD_EVENT", eventData: calendarEvent });
     setShowEventForm(false);
   }
 
@@ -87,7 +87,7 @@ export default function EventForm() {
                 onClick={() => {
                   dispatchEvent({
                     type: "REMOVE_EVENT",
-                    payload: selectedEvent,
+                    eventData: selectedEvent,
                   });
                   setShowEventForm(false);
                 }}
