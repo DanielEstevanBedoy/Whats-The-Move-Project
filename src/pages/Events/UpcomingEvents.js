@@ -1,5 +1,5 @@
 import React from "react";
-import Events from "./Events.js";
+import Events from "./Planning.js";
 
 export default function FutureEvents()
 {
