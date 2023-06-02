@@ -35,7 +35,7 @@ export default function Dashboard(){
     return(
         <div className="dashboard">
             <div className="header">
-                {/* <h2>Dashboard component: You have signed in {user.displayName} </h2> */}
+                <h2>Dashboard component: You have signed in {user.displayName} </h2>
                 <button onClick={()=> auth.signOut()} className="signout-button">Sign out</button>
             </div>
             <BrowserRouter>
