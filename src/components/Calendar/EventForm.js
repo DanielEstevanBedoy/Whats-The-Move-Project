@@ -52,6 +52,8 @@ export default function EventForm() {
     case "6":
       formPositionClasses = "justify-end right-11.7";
       break;
+    default:
+      throw new Error();
   }
 
   function handleSubmit(event) {
@@ -65,8 +67,8 @@ export default function EventForm() {
     };
 
     if (selectedEvent)
-      dispatchEvent({ type: "UPDATE_EVENT", payload: calendarEvent });
-    else dispatchEvent({ type: "ADD_EVENT", payload: calendarEvent });
+      dispatchEvent({ type: "UPDATE_EVENT", eventData: calendarEvent });
+    else dispatchEvent({ type: "ADD_EVENT", eventData: calendarEvent });
     setShowEventForm(false);
   }
 
@@ -87,7 +89,7 @@ export default function EventForm() {
                 onClick={() => {
                   dispatchEvent({
                     type: "REMOVE_EVENT",
-                    payload: selectedEvent,
+                    eventData: selectedEvent,
                   });
                   setShowEventForm(false);
                 }}
@@ -133,7 +135,7 @@ export default function EventForm() {
               onChange={(event) => setDescription(event.target.value)}
             />
             <span className="material-icons-outlined text-gray-400">
-              bookmark_border
+              group
             </span>
             <div className="flex gap-x-2">
               {labels.map((lbl, i) => (

@@ -3,25 +3,30 @@ import GlobalContext from "./GlobalContext";
 import dayjs from "dayjs";
 
 /* Reducer function takes current state and an action, and returns the new state */
-function savedEventsReducer(state, { type, payload }) {
+function savedEventsReducer(state, { type, eventData }) {
+  const ADD_EVENT = "ADD_EVENT"
+  const REMOVE_EVENT = "REMOVE_EVENT"
+  const UPDATE_EVENT = "UPDATE_EVENT"
+
   switch (type) {
-    case "ADD_EVENT":
-      return [...state, payload];
-      break;
-    case "REMOVE_EVENT":
-      // remove an event from the state where the event id matches the payload id
-      return state.filter((event) => event.id !== payload.id);
-      break;
-    case "UPDATE_EVENT":
-      // update an event in the state where the event id matches the payload id
-      return state.map((event) => (event.id === payload.id ? payload : event));
+    case ADD_EVENT:
+      // returns a new state that includes all the previous events plus the new event from eventData 
+      return [...state, eventData];
+    case REMOVE_EVENT:
+      // returns a new state that includes all events except for the one that matches the id in eventData
+      return state.filter((event) => event.id !== eventData.id);
+    case UPDATE_EVENT:
+      // returns a new state where the event with id matching eventData is replaced with event in eventData
+      return state.map((event) => (event.id === eventData.id ? eventData : event));
     default:
       throw new Error();
   }
 }
 
-/* Initializes the state for useReducer. It retrieves events saved in localStorage, parses them, 
-and returns them. If there are no events in localStorage, it returns an empty array. */
+/* Initializes the state for useReducer. When the application loads, it checks localStorage
+for previously saved events. If it finds any, it retrieves events saved in localStorage, parses them,
+ and loads them into the applciation state. If there are no events in localStorage, it returns an 
+ empty array. */
 function initEvents() {
   const storageEvents = localStorage.getItem("savedEvents");
   const parsedEvents = storageEvents ? JSON.parse(storageEvents) : [];
@@ -46,30 +51,19 @@ export default function ContextWrapper(props) {
     initEvents
   );
 
-  /* The function passed to useEffect will run everytime savedEvents changes */
+  /* The function passed to useEffect will run everytime savedEvents changes. 
+  When you create or update events, these are stored in localStorage under the 
+  key "savedEvents". 
+  */
   useEffect(() => {
     localStorage.setItem("savedEvents", JSON.stringify(savedEvents));
   }, [savedEvents]);
 
   useEffect(() => {
-    if(!showEventForm) {
-        setSelectedEvent(null);
+    if (!showEventForm) {
+      setSelectedEvent(null);
     }
   }, [showEventForm]);
-
-  /*
-  useEffect(() => {
-    if(selectedEvent) {
-        setTitle(selectedEvent.title);
-        setDescription(selectedEvent.description);
-        setSelectedLabel(labels.find((lbl) => lbl === selectedEvent.label));
-    } else {
-        setTitle("");
-        setDescription("");
-        setSelectedLabel(labels[0]);
-    }
-}, [selectedEvent]);
-*/
 
   return (
     <GlobalContext.Provider
@@ -82,7 +76,7 @@ export default function ContextWrapper(props) {
         setShowEventForm,
         dispatchEvent,
         savedEvents,
-        selectedEvent, 
+        selectedEvent,
         setSelectedEvent,
       }}
     >

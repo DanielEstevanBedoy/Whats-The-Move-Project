@@ -1,5 +1,7 @@
 import CalendarPage from "../pages/CalendarPage/CalendarPage";
 import Friends from "../pages/Friend/friends";
+import PastEvents from "../pages/Events/PastEvents";
+import FutureEvents from "../pages/Events/UpcomingEvents";
 import Events from "../pages/Events/Events";
 import {auth} from "../utils/firebase";
 import {useAuthState} from 'react-firebase-hooks/auth';
@@ -41,12 +43,16 @@ export default function Dashboard(){
                 <nav className="navbar">
                     <Link to="/CalendarPage" className="nav-link"><button className="nav-button">CalendarPage</button></Link>
                     <Link to="/Friends" className="nav-link"><button className="nav-button"> Friends</button></Link>
-                    <Link to="/Events" className="nav-link"><button className="nav-button">Events</button></Link>
+	            <Link to="/Events" className="nav-link"><button className="nav-button"> Events</button></Link>
+                    <Link to="/PastEvents" className="nav-link"><button className="nav-button">Past Events</button></Link>
+	            <Link to="/FutureEvents" className="nav-link"><button className="nav-button">Upcoming Events</button></Link>
                 </nav>
                 <Routes>
                     <Route path="/CalendarPage" element={<CalendarPage />} />
                     <Route path="/Friends" element={<Friends/>} />
-                    <Route path="/Events" element={<Events/>} />
+	            <Route path="/Events" element={<Events/>} />
+                    <Route path="/PastEvents" element={<PastEvents/>} />
+	            <Route path="/FutureEvents" element={<FutureEvents/>} />
                     <Route path="/login" element={<Login/>} />
                 </Routes>  
             </BrowserRouter>
