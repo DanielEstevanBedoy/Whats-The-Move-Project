@@ -1,68 +1,71 @@
 import React, { useEffect, useState } from 'react';
+import{getAuth} from 'firebase/auth';
 import { auth, db } from '../../utils/firebase';
+import { getDatabase, ref, onValue, remove, set,get,child } from 'firebase/database';
 
 function FriendRequests() {
-  const [user, setUser] = useState(null);
   const [friendRequests, setFriendRequests] = useState([]);
-
+  const auth = getAuth();
+  const db = getDatabase();
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUser(user);
-        const friendRequestsRef = db.ref(`Users/${user.uid}/friendRequests`);
-        friendRequestsRef.on('value', (snapshot) => {
-          const friendRequestsData = snapshot.val();
-          if (friendRequestsData) {
-            const friendRequestsList = Object.entries(friendRequestsData).map(([id, senderID]) => ({
-              id,
-              senderID
-            }));
-            setFriendRequests(friendRequestsList);
-          } else {
-            setFriendRequests([]);
-          }
-        });
+    const friendRequestsRef = ref(db, `Users/${auth.currentUser.uid}/friendRequests`);
+    const unsub = onValue(friendRequestsRef, async (snapshot) => {
+      const friendRequestsData = snapshot.val();
+      if (friendRequestsData) {
+        const friendRequestsList = [];
+        for (let id in friendRequestsData) {
+          const senderID = friendRequestsData[id];
+          // Fetch the name of the sender
+          const snapshot = await get(ref(db, `Users/${senderID}/name`));
+          const senderName = snapshot.val();
+          friendRequestsList.push({
+            id,
+            senderID,
+            senderName
+          });
+        }
+        setFriendRequests(friendRequestsList);
       } else {
-        setUser(null);
         setFriendRequests([]);
       }
     });
-
+  
     return () => {
-      unsubscribe();
+      unsub();
     };
-  }, []);
+  }, [auth, db]);
+  
 
   const handleAcceptRequest = (requestId, senderID) => {
     const currentUserID = auth.currentUser.uid;
-    const currentUserFriendsRef = db.ref(`Users/${currentUserID}/friends`);
-    const senderFriendsRef = db.ref(`Users/${senderID}/friends`);
-
-    currentUserFriendsRef.child(senderID).set(true);
-    currentUserFriendsRef.child(requestId).set(true);
-    senderFriendsRef.child(currentUserID).set(true);
-
-    const friendRequestsRef = db.ref(`Users/${currentUserID}/friendRequests`);
-    friendRequestsRef.child(requestId).remove();
+    const currentUserFriendsRef = ref(db, `Users/${currentUserID}/friends`);
+    const senderFriendsRef = ref(db, `Users/${senderID}/friends`);
+  
+    set(child(currentUserFriendsRef, senderID), true);
+    set(child(senderFriendsRef, currentUserID), true);
+  
+    const friendRequestsRef = ref(db, `Users/${currentUserID}/friendRequests`);
+    remove(child(friendRequestsRef, requestId));
   };
+  
 
-  const handleDeclineRequest = (requestId) => {
+  const handleDeclineRequest = async (requestId) => {
     const currentUserID = auth.currentUser.uid;
-    const friendRequestsRef = db.ref(`Users/${currentUserID}/friendRequests`);
-    friendRequestsRef.child(requestId).remove();
+    const friendRequestsRef = ref(db, `Users/${currentUserID}/friendRequests`);
+    await remove(friendRequestsRef.child(requestId));
   };
 
   return (
     <div>
-      <h1>Friend Requests</h1>
-      {friendRequests.map((request) => (
-        <div key={request.id}>
-          <p>{request.senderID} wants to be your friend.</p>
-          <button onClick={() => handleAcceptRequest(request.id, request.senderID)}>Accept</button>
-          <button onClick={() => handleDeclineRequest(request.id)}>Decline</button>
-        </div>
-      ))}
-    </div>
+    <h1>Friend Requests</h1>
+    {friendRequests.map((request) => (
+      <div key={request.id}>
+          <p>{request.senderName} wants to be your friend.</p>      
+        <button onClick={() => handleAcceptRequest(request.id, request.senderID)}>Accept</button>
+        <button onClick={() => handleDeclineRequest(request.id)}>Decline</button>
+      </div>
+    ))}
+  </div>
   );
 }
 

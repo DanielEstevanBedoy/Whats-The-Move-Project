@@ -1,44 +1,54 @@
-import React, { useState, useEffect } from 'react';
-import {useAuthState} from 'react-firebase-hooks/auth';
-import { db, auth } from '../../utils/firebase';
-import { getDatabase, ref, onValue } from "firebase/database";
+import React, { useEffect, useState } from 'react';
+import { getAuth } from 'firebase/auth';
+import { getDatabase, ref, onValue, off } from 'firebase/database';
 
 function CurrentFriends() {
-  const [user, loading] = useAuthState(auth);
-  
-  const [currentFriends, setCurrentFriends] = useState([]);
-  const db = getDatabase();
+  const [friends, setFriends] = useState([]);
 
   useEffect(() => {
-    if (user) {  // check if user exists
-      const friendsRef = ref(db, `friends/${user.uid}`);
-      const unsubscribe = onValue(friendsRef, (snapshot) => {
-        const data = snapshot.val();
-        const friends = [];
-        for (let id in data) {
-          friends.push({
-            friendId: id,
-            ...data[id],
-          });
-        }
-        setCurrentFriends(friends);
-      });
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
 
-      // remember to unsubscribe from the database when the component unmounts
-      return () => unsubscribe();
+    if (currentUser) {
+      const friendsRef = ref(getDatabase(), `Users/${currentUser.uid}/friends`);
+      const listener = onValue(friendsRef, (snapshot) => {
+        const friendsData = snapshot.val();
+        if (friendsData) {
+          const friendIds = Object.keys(friendsData).filter(key => friendsData[key]);  // Only keep truthy friendIDs
+          const promises = friendIds.map(friendId => {
+            return new Promise((resolve) => {
+              const friendRef = ref(getDatabase(), `Users/${friendId}`);
+              onValue(friendRef, friendSnap => {
+                const friendUserData = friendSnap.val();
+                resolve(friendUserData.displayName);  // Assuming there's a displayName property
+              });
+            });
+          });
+          Promise.all(promises)
+            .then(friendNames => {
+              setFriends(friendNames);
+            });
+        } else {
+          setFriends([]);
+        }
+      });
+      return () => off(friendsRef, listener);
+    } else {
+      setFriends([]);
     }
-  }, [user, db]);
+  }, []);
 
   return (
     <div>
-      <h2>Current Friends</h2>
-      {currentFriends.map((friend) => (
-        <div key={friend.friendId}>
-          <p>{friend.email}</p>
-        </div>
-      ))}
+      <h1>Current Friends</h1>
+      {friends.length > 0 ? (
+        <p>You are friends with: {friends.join(', ')}</p>
+      ) : (
+        <p>You have no friends.</p>
+      )}
     </div>
   );
 }
 
 export default CurrentFriends;
+
