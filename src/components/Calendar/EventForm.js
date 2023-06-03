@@ -52,6 +52,8 @@ export default function EventForm() {
     case "6":
       formPositionClasses = "justify-end right-11.7";
       break;
+    default:
+      throw new Error();
   }
 
   function handleSubmit(event) {

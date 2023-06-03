@@ -23,8 +23,10 @@ function savedEventsReducer(state, { type, eventData }) {
   }
 }
 
-/* Initializes the state for useReducer. It retrieves events saved in localStorage, parses them, 
-and returns them. If there are no events in localStorage, it returns an empty array. */
+/* Initializes the state for useReducer. When the application loads, it checks localStorage
+for previously saved events. If it finds any, it retrieves events saved in localStorage, parses them,
+ and loads them into the applciation state. If there are no events in localStorage, it returns an 
+ empty array. */
 function initEvents() {
   const storageEvents = localStorage.getItem("savedEvents");
   const parsedEvents = storageEvents ? JSON.parse(storageEvents) : [];
@@ -49,7 +51,10 @@ export default function ContextWrapper(props) {
     initEvents
   );
 
-  /* The function passed to useEffect will run everytime savedEvents changes */
+  /* The function passed to useEffect will run everytime savedEvents changes. 
+  When you create or update events, these are stored in localStorage under the 
+  key "savedEvents". 
+  */
   useEffect(() => {
     localStorage.setItem("savedEvents", JSON.stringify(savedEvents));
   }, [savedEvents]);
