@@ -3,13 +3,13 @@ import dayjs from "dayjs";
 import GlobalContext from "../../Context/GlobalContext";
 
 const colorMap200 = {
-    gray: "bg-gray-200",
-    blue: "bg-blue-200",
-    indigo: "bg-indigo-200",
-    green: "bg-green-200",
-    red: "bg-red-200",
-    purple: "bg-purple-200",
-  };
+  gray: "bg-gray-200",
+  blue: "bg-blue-200",
+  indigo: "bg-indigo-200",
+  green: "bg-green-200",
+  red: "bg-red-200",
+  purple: "bg-purple-200",
+};
 
 // Represent every individual item in our grid
 export default function Day({ day, rowIndex }) {
@@ -21,7 +21,7 @@ export default function Day({ day, rowIndex }) {
 
   useEffect(() => {
     const events = savedEvents.filter(
-      (event) => dayjs(event.day).format("DD-MM-YY") == day.format("DD-MM-YY")
+      (event) => dayjs(event.day).format("DD-MM-YY") === day.format("DD-MM-YY")
     );
     setTodaysEvents(events);
   }, [savedEvents, day]);
@@ -51,7 +51,10 @@ export default function Day({ day, rowIndex }) {
           <div
             key={index}
             onClick={() => setSelectedEvent(event)}
-            className={colorMap200[event.label] + " p-1 mr-3 text-gray-600 text-sm rounded mb-1 truncate"}
+            className={
+              colorMap200[event.label] +
+              " p-1 mr-3 text-gray-600 text-sm rounded mb-1 truncate"
+            }
           >
             {event.title}
           </div>
