@@ -19,7 +19,7 @@ function savedEventsReducer(state, { type, payload }) {
     case "REMOVE_EVENT":
       if (auth.currentUser) {
         const userEventsRef = ref(db, `Users/${auth.currentUser.uid}/Events`);
-        const eventToRemoveRef = child(userEventsRef, payload);
+        const eventToRemoveRef = child(userEventsRef, payload.id);
         remove(eventToRemoveRef);
       }
       return state.filter((event) => event.id !== payload.id);
