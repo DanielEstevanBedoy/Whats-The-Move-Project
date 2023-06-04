@@ -44,8 +44,6 @@ export default function Dashboard(){
                     <Link to="/CalendarPage" className="nav-link"><button className="nav-button">CalendarPage</button></Link>
                     <Link to="/Friends" className="nav-link"><button className="nav-button"> Friends</button></Link>
 	            <Link to="/Events" className="nav-link"><button className="nav-button"> Events</button></Link>
-                    <Link to="/PastEvents" className="nav-link"><button className="nav-button">Past Events</button></Link>
-	            <Link to="/FutureEvents" className="nav-link"><button className="nav-button">Upcoming Events</button></Link>
                 </nav>
                 <Routes>
                     <Route path="/CalendarPage" element={<CalendarPage />} />
