@@ -15,8 +15,11 @@ export default function Login() {
       const userData = {
         displayName: user.displayName,
         email: user.email,
+        photoURL: user.photoURL,
       };
       await set(userProfileRef, userData);
+
+      console.log("user.photoURL: " + user.photoURL);
 
       console.log("User profile created:", userData);
     } catch (error) {
