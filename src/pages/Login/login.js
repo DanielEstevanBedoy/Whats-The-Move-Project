@@ -1,6 +1,6 @@
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth, db } from "../../utils/firebase";
-import { ref, set } from "firebase/database";
+import { ref, set, get } from "firebase/database";
 
 export default function Login() {
   const googleProvider = new GoogleAuthProvider();
@@ -9,7 +9,7 @@ export default function Login() {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-
+  
       // Store user profile in the database
       const userProfileRef = ref(db, `Users/${user.uid}`);
       const userData = {
@@ -17,15 +17,24 @@ export default function Login() {
         email: user.email,
         photoURL: user.photoURL,
       };
-      await set(userProfileRef, userData);
-
+  
+      // Check if user profile already exists
+      const snapshot = await get(userProfileRef);
+  
+      if (!snapshot.exists()) {
+        await set(userProfileRef, userData);
+        console.log("User profile created:", userData);
+      } else {
+        console.log("User already has a profile");
+      }
+  
       console.log("user.photoURL: " + user.photoURL);
-
-      console.log("User profile created:", userData);
+  
     } catch (error) {
       console.log(error);
     }
   };
+  
 
   return (
     <div className="shadow-xl mt-32 p-10 text-gray 700 rounded-lg">
