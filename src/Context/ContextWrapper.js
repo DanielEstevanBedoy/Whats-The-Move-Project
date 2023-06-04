@@ -1,4 +1,6 @@
 import React, { useReducer, useState, useEffect } from "react";
+import { ref, set } from "firebase/database";
+import { auth, db } from "../utils/firebase";
 import GlobalContext from "./GlobalContext";
 import dayjs from "dayjs";
 
@@ -15,6 +17,8 @@ function savedEventsReducer(state, { type, payload }) {
     case "UPDATE_EVENT":
       // update an event in the state where the event id matches the payload id
       return state.map((event) => (event.id === payload.id ? payload : event));
+    case "INIT_EVENTS":
+      return payload;
     default:
       throw new Error();
   }
@@ -22,10 +26,19 @@ function savedEventsReducer(state, { type, payload }) {
 
 /* Initializes the state for useReducer. It retrieves events saved in localStorage, parses them, 
 and returns them. If there are no events in localStorage, it returns an empty array. */
-function initEvents() {
-  const storageEvents = localStorage.getItem("savedEvents");
-  const parsedEvents = storageEvents ? JSON.parse(storageEvents) : [];
-  return parsedEvents;
+async function initEvents() {
+  if (auth.currentUser) {
+    const userEventsRef = ref(db, `Users/${auth.currentUser.uid}/Events`);
+    let parsedEvents = [];
+    await userEventsRef.once('value', (snapshot) => {
+        const data = snapshot.val();
+        parsedEvents = data ? Object.values(data) : [];
+    });
+    return parsedEvents;
+  } else {
+    console.log("No user is signed in");
+    return [];
+  }
 }
 
 /* These values are now accessible by the useContext hook */
@@ -40,16 +53,23 @@ export default function ContextWrapper(props) {
   const [showEventForm, setShowEventForm] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
-  const [savedEvents, dispatchEvent] = useReducer(
-    savedEventsReducer,
-    [],
-    initEvents
-  );
+  const [savedEvents, dispatchEvent] = useReducer(savedEventsReducer, []);
+  useEffect(() => {
+    initEvents().then(events => dispatchEvent({ type: "INIT_EVENTS", payload: events }));
+  }, []);
 
   /* The function passed to useEffect will run everytime savedEvents changes */
+  // useEffect(() => {
+  //   localStorage.setItem("savedEvents", JSON.stringify(savedEvents));
+  // }, [savedEvents]);
+
   useEffect(() => {
-    localStorage.setItem("savedEvents", JSON.stringify(savedEvents));
+    if (auth.currentUser) {
+      const userEventsRef = ref(db, `Users/${auth.currentUser.uid}/Events`);
+      set(userEventsRef, savedEvents);
+    }
   }, [savedEvents]);
+  
 
   useEffect(() => {
     if(!showEventForm) {
