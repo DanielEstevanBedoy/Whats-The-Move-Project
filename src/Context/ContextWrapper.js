@@ -1,5 +1,6 @@
 import React, { useReducer, useState, useEffect } from "react";
-import { ref, set } from "firebase/database";
+import { ref, set, update, get, push } from "firebase/database";
+import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../utils/firebase";
 import GlobalContext from "./GlobalContext";
 import dayjs from "dayjs";
@@ -9,22 +10,22 @@ function savedEventsReducer(state, { type, payload }) {
   switch (type) {
     case "ADD_EVENT":
       return [...state, payload];
-      break;
     case "REMOVE_EVENT":
       // remove an event from the state where the event id matches the payload id
       return state.filter((event) => event.id !== payload.id);
-      break;
     case "UPDATE_EVENT":
       // update an event in the state where the event id matches the payload id
       return state.map((event) => (event.id === payload.id ? payload : event));
     case "INIT_EVENTS":
       return payload;
+    case "CLEAR_EVENTS":
+      return [];
     default:
       throw new Error();
   }
 }
 
-/* Initializes the state for useReducer. It retrieves events saved in localStorage, parses them, 
+/* Initializes the state for useReducer. It retrieves events saved in the realtime database, parses them, 
 and returns them. If there are no events in localStorage, it returns an empty array. */
 async function initEvents() {
   if (auth.currentUser) {
@@ -48,15 +49,38 @@ export default function ContextWrapper(props) {
    * Then, we are providing these values to all child components via the context provider.
    * We must store our state somewhere.
    */
+
+  const [initialized, setInitialized] = useState(true);
+
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
+  //     if (user) {
+  //       // User is signed in, fetch the events
+  //       initEvents().then(events => {
+  //         dispatchEvent({ type: "INIT_EVENTS", payload: events });
+  //         setInitialized(false);
+  //     });
+  //     } else {
+  //       // No user is signed in, clear the events
+  //       dispatchEvent({ type: "CLEAR_EVENTS" });
+  //     }
+  //   });
+
+  //   return () => unsubscribe();
+  // }, []);
+
   const [monthIndex, setMonthIndex] = useState(dayjs().month());
   const [daySelected, setDaySelected] = useState(dayjs());
   const [showEventForm, setShowEventForm] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
   const [savedEvents, dispatchEvent] = useReducer(savedEventsReducer, []);
-  useEffect(() => {
-    initEvents().then(events => dispatchEvent({ type: "INIT_EVENTS", payload: events }));
-  }, []);
+  // useEffect(() => {
+  //   initEvents().then(events => {
+  //     dispatchEvent({ type: "INIT_EVENTS", payload: events });
+  //     setInitialized(true);
+  //   });
+  // }, []);
 
   /* The function passed to useEffect will run everytime savedEvents changes */
   // useEffect(() => {
@@ -64,11 +88,36 @@ export default function ContextWrapper(props) {
   // }, [savedEvents]);
 
   useEffect(() => {
-    if (auth.currentUser) {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, fetch the events
+        initEvents().then(events => {
+          dispatchEvent({ type: "INIT_EVENTS", payload: events });
+          setInitialized(true);
+        });
+      } else {
+        // No user is signed in, clear the events
+        dispatchEvent({ type: "CLEAR_EVENTS" });
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (initialized && auth.currentUser) {
       const userEventsRef = ref(db, `Users/${auth.currentUser.uid}/Events`);
-      set(userEventsRef, savedEvents);
+      get(userEventsRef).then((snapshot) => {
+        const data = snapshot.val();
+        // Check if the user has any events in the database
+        if (data) {
+          // If they do, update the events with the current savedEvents
+          update(userEventsRef, savedEvents);
+        } else {
+          // If they don't, set the events to the current savedEvents
+          set(userEventsRef, savedEvents);
+        }
+      });
     }
-  }, [savedEvents]);
+  }, [savedEvents, initialized]);
   
 
   useEffect(() => {
