@@ -1,5 +1,5 @@
 import CalendarPage from "../pages/CalendarPage/CalendarPage";
-import Friends from "../pages/Friend/friends";
+import Friends from "../pages/Friend/FriendsPage";
 import PastEvents from "../pages/Events/PastEvents";
 import FutureEvents from "../pages/Events/UpcomingEvents";
 import Events from "../pages/Events/Events";
