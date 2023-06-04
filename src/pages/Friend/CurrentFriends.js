@@ -1,48 +1,61 @@
 import React, { useEffect, useState } from 'react';
-import { getAuth } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { getDatabase, ref, onValue, off, remove, child } from 'firebase/database';
 
 function CurrentFriends() {
   const [friends, setFriends] = useState([]);
+  const [loading, setLoading] = useState(true);
   const db = getDatabase();
   const auth = getAuth();
 
   useEffect(() => {
-    const currentUser = auth.currentUser;
-
-    if (currentUser) {
-      const friendsRef = ref(db, `Users/${currentUser.uid}/friends`);
-      const listener = onValue(friendsRef, (snapshot) => {
-        const friendsData = snapshot.val();
-        if (friendsData) {
-          const friendIds = Object.keys(friendsData).filter(key => friendsData[key]);
-          const promises = friendIds.map(friendId => {
-            return new Promise((resolve) => {
-              const friendRef = ref(db, `Users/${friendId}`);
-              onValue(friendRef, friendSnap => {
-                const friendUserData = friendSnap.val();
-                resolve({
-                  id: friendId,
-                  name: friendUserData.displayName,
-                  photoURL: friendUserData.photoURL, // Adding photo URL
+    const authUnsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const friendsRef = ref(db, `Users/${user.uid}/friends`);
+        const dbUnsubscribe = onValue(friendsRef, (snapshot) => {
+          const friendsData = snapshot.val();
+          if (friendsData) {
+            const friendIds = Object.keys(friendsData).filter(key => friendsData[key]);
+            const promises = friendIds.map(friendId => {
+              return new Promise((resolve) => {
+                const friendRef = ref(db, `Users/${friendId}`);
+                onValue(friendRef, friendSnap => {
+                  const friendUserData = friendSnap.val();
+                  if (friendUserData) {
+                    resolve({
+                      id: friendId,
+                      name: friendUserData.displayName,
+                      photoURL: friendUserData.photoURL,
+                    });
+                  }
+                  else {
+                    console.warn(`User data for friendID ${friendId} is not available.`);
+                  }
                 });
               });
             });
-          });
-          Promise.all(promises)
-            .then(friendData => {
-              setFriends(friendData);
-              // temp
-              console.log(friendData);
-            });
-        } else {
-          setFriends([]);
-        }
-      });
-      return () => off(friendsRef, listener);
-    } else {
-      setFriends([]);
-    }
+            Promise.all(promises)
+              .then(friendData => {
+                setFriends(friendData);
+                setLoading(false);
+              });
+          } else {
+            setFriends([]);
+            setLoading(false);
+          }
+        });
+        return () => {
+          dbUnsubscribe();
+        };
+      } else {
+        setFriends([]);
+        setLoading(false);
+      }
+    });
+
+    return () => {
+      authUnsubscribe();
+    };
   }, [auth, db]);
 
   const handleRemoveFriend = async (friendId) => {
@@ -58,8 +71,9 @@ function CurrentFriends() {
     }
   };
 
-  // temp
-  console.log("friends.photoURL: " + friends.photoURL)
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="bg-white rounded shadow-lg p-6 mt-6">
