@@ -9,7 +9,7 @@ function Events() {
   const [events, setEvents] = useState([]);
   const [eventName, setEventName] = useState('');
   const [eventDate, setEventDate] = useState('');
-  const [eventTime, setEventTime] = useState('');
+  const [eventDescription, setEventDescription] = useState('');
   const currentUser = auth.currentUser;
 
   useEffect(() => {
@@ -29,13 +29,13 @@ function Events() {
   }, [currentUser]);
 
   const handleCreateEvent = () => {
-    if (eventName && eventDate && eventTime) {
+    if (eventName && eventDate && eventDescription) {
       const eventId = push(ref(db, `Users/${currentUser.uid}/Events`)).key;
   
       const eventData = {
         name: eventName,
         date: eventDate,
-        time: eventTime,
+        description: eventDescription,
         userId: currentUser.uid
       };
   
@@ -44,7 +44,7 @@ function Events() {
           console.log('Event created successfully!');
           setEventName('');
           setEventDate('');
-          setEventTime('');
+          setEventDescription('');
         })
         .catch((error) => {
           console.error('Error creating event:', error);

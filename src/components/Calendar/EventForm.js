@@ -67,8 +67,8 @@ export default function EventForm() {
     };
 
     if (selectedEvent)
-      dispatchEvent({ type: "UPDATE_EVENT", eventData: calendarEvent });
-    else dispatchEvent({ type: "ADD_EVENT", eventData: calendarEvent });
+      dispatchEvent({ type: "UPDATE_EVENT", payload: calendarEvent });
+    else dispatchEvent({ type: "ADD_EVENT", payload: calendarEvent });
     setShowEventForm(false);
   }
 

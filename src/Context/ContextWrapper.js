@@ -1,36 +1,48 @@
 import React, { useReducer, useState, useEffect } from "react";
+import { ref, set } from "firebase/database";
+import { auth, db } from "../utils/firebase";
 import GlobalContext from "./GlobalContext";
 import dayjs from "dayjs";
 
 /* Reducer function takes current state and an action, and returns the new state */
-function savedEventsReducer(state, { type, eventData }) {
+function savedEventsReducer(state, { type, payload }) {
   const ADD_EVENT = "ADD_EVENT"
   const REMOVE_EVENT = "REMOVE_EVENT"
   const UPDATE_EVENT = "UPDATE_EVENT"
 
   switch (type) {
-    case ADD_EVENT:
-      // returns a new state that includes all the previous events plus the new event from eventData 
-      return [...state, eventData];
-    case REMOVE_EVENT:
-      // returns a new state that includes all events except for the one that matches the id in eventData
-      return state.filter((event) => event.id !== eventData.id);
-    case UPDATE_EVENT:
-      // returns a new state where the event with id matching eventData is replaced with event in eventData
-      return state.map((event) => (event.id === eventData.id ? eventData : event));
+    case "ADD_EVENT":
+      return [...state, payload];
+      break;
+    case "REMOVE_EVENT":
+      // remove an event from the state where the event id matches the payload id
+      return state.filter((event) => event.id !== payload.id);
+      break;
+    case "UPDATE_EVENT":
+      // update an event in the state where the event id matches the payload id
+      return state.map((event) => (event.id === payload.id ? payload : event));
+    case "INIT_EVENTS":
+      return payload;
     default:
       throw new Error();
   }
 }
 
-/* Initializes the state for useReducer. When the application loads, it checks localStorage
-for previously saved events. If it finds any, it retrieves events saved in localStorage, parses them,
- and loads them into the applciation state. If there are no events in localStorage, it returns an 
- empty array. */
-function initEvents() {
-  const storageEvents = localStorage.getItem("savedEvents");
-  const parsedEvents = storageEvents ? JSON.parse(storageEvents) : [];
-  return parsedEvents;
+/* Initializes the state for useReducer. It retrieves events saved in localStorage, parses them, 
+and returns them. If there are no events in localStorage, it returns an empty array. */
+async function initEvents() {
+  if (auth.currentUser) {
+    const userEventsRef = ref(db, `Users/${auth.currentUser.uid}/Events`);
+    let parsedEvents = [];
+    await userEventsRef.once('value', (snapshot) => {
+        const data = snapshot.val();
+        parsedEvents = data ? Object.values(data) : [];
+    });
+    return parsedEvents;
+  } else {
+    console.log("No user is signed in");
+    return [];
+  }
 }
 
 /* These values are now accessible by the useContext hook */
@@ -45,19 +57,23 @@ export default function ContextWrapper(props) {
   const [showEventForm, setShowEventForm] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
-  const [savedEvents, dispatchEvent] = useReducer(
-    savedEventsReducer,
-    [],
-    initEvents
-  );
-
-  /* The function passed to useEffect will run everytime savedEvents changes. 
-  When you create or update events, these are stored in localStorage under the 
-  key "savedEvents". 
-  */
+  const [savedEvents, dispatchEvent] = useReducer(savedEventsReducer, []);
   useEffect(() => {
-    localStorage.setItem("savedEvents", JSON.stringify(savedEvents));
+    initEvents().then(events => dispatchEvent({ type: "INIT_EVENTS", payload: events }));
+  }, []);
+
+  /* The function passed to useEffect will run everytime savedEvents changes */
+  // useEffect(() => {
+  //   localStorage.setItem("savedEvents", JSON.stringify(savedEvents));
+  // }, [savedEvents]);
+
+  useEffect(() => {
+    if (auth.currentUser) {
+      const userEventsRef = ref(db, `Users/${auth.currentUser.uid}/Events`);
+      set(userEventsRef, savedEvents);
+    }
   }, [savedEvents]);
+  
 
   useEffect(() => {
     if (!showEventForm) {
