@@ -1,0 +1,143 @@
+[debug] [2023-05-12T17:26:33.451Z] ----------------------------------------------------------------------
+[debug] [2023-05-12T17:26:33.453Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\deste\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js serve
+[debug] [2023-05-12T17:26:33.454Z] CLI Version:   12.0.0
+[debug] [2023-05-12T17:26:33.454Z] Platform:      win32
+[debug] [2023-05-12T17:26:33.455Z] Node Version:  v18.16.0
+[debug] [2023-05-12T17:26:33.456Z] Time:          Fri May 12 2023 10:26:33 GMT-0700 (Pacific Daylight Time)
+[debug] [2023-05-12T17:26:33.456Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-05-12T17:26:33.588Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-05-12T17:26:33.589Z] > authorizing via signed-in user (destevanbedoy@gmail.com)
+[debug] [2023-05-12T17:26:33.589Z] [iam] checking project whats-the-move-project-bb0b0 for permissions ["firebase.projects.get"]
+[debug] [2023-05-12T17:26:33.591Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/whats-the-move-project-bb0b0:testIamPermissions [none]
+[debug] [2023-05-12T17:26:33.591Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/whats-the-move-project-bb0b0:testIamPermissions x-goog-quota-user=projects/whats-the-move-project-bb0b0
+[debug] [2023-05-12T17:26:33.591Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/whats-the-move-project-bb0b0:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2023-05-12T17:26:33.826Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/whats-the-move-project-bb0b0:testIamPermissions 200
+[debug] [2023-05-12T17:26:33.827Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/whats-the-move-project-bb0b0:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2023-05-12T17:26:33.828Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/whats-the-move-project-bb0b0 [none]
+[debug] [2023-05-12T17:26:34.033Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/whats-the-move-project-bb0b0 200
+[debug] [2023-05-12T17:26:34.033Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/whats-the-move-project-bb0b0 {"projectId":"whats-the-move-project-bb0b0","projectNumber":"660621588489","displayName":"Whats-the-move-project","name":"projects/whats-the-move-project-bb0b0","resources":{"hostingSite":"whats-the-move-project-bb0b0"},"state":"ACTIVE","etag":"1_d386172c-9c1f-4c30-b7e2-1d863d51c860"}
+[info] 
+[info] === Serving from 'C:\Users\deste\whats-the-move-class-project'...
+[info] 
+[debug] [2023-05-12T17:26:34.040Z] defaultcredentials: writing to file C:\Users\deste\AppData\Roaming\firebase\destevanbedoy_gmail_com_application_default_credentials.json
+[debug] [2023-05-12T17:26:34.042Z] Setting GAC to C:\Users\deste\AppData\Roaming\firebase\destevanbedoy_gmail_com_application_default_credentials.json {"metadata":{"emulator":{"name":"functions"},"message":"Setting GAC to C:\\Users\\deste\\AppData\\Roaming\\firebase\\destevanbedoy_gmail_com_application_default_credentials.json"}}
+[debug] [2023-05-12T17:26:34.043Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/whats-the-move-project-bb0b0/adminSdkConfig [none]
+[debug] [2023-05-12T17:26:34.484Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/whats-the-move-project-bb0b0/adminSdkConfig 200
+[debug] [2023-05-12T17:26:34.485Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/whats-the-move-project-bb0b0/adminSdkConfig {"projectId":"whats-the-move-project-bb0b0","storageBucket":"whats-the-move-project-bb0b0.appspot.com"}
+[debug] [2023-05-12T17:26:34.496Z] Error: listen EADDRINUSE: address already in use 127.0.0.1:5000
+    at Server.setupListenHandle [as _listen2] (node:net:1740:16)
+    at listenInCluster (node:net:1788:12)
+    at GetAddrInfoReqWrap.doListen [as callback] (node:net:1937:7)
+    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:8)
+[error] 
+[error] Error: An unexpected error has occurred.
+[info] i  functions: Watching "C:\Users\deste\whats-the-move-class-project\functions" for Cloud Functions... {"metadata":{"emulator":{"name":"functions"},"message":"Watching \"C:\\Users\\deste\\whats-the-move-class-project\\functions\" for Cloud Functions..."}}
+[debug] [2023-05-12T17:26:34.503Z] Validating nodejs source
+[debug] [2023-05-12T17:27:34.344Z] ----------------------------------------------------------------------
+[debug] [2023-05-12T17:27:34.346Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\deste\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js serve
+[debug] [2023-05-12T17:27:34.346Z] CLI Version:   12.0.0
+[debug] [2023-05-12T17:27:34.347Z] Platform:      win32
+[debug] [2023-05-12T17:27:34.347Z] Node Version:  v18.16.0
+[debug] [2023-05-12T17:27:34.347Z] Time:          Fri May 12 2023 10:27:34 GMT-0700 (Pacific Daylight Time)
+[debug] [2023-05-12T17:27:34.348Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-05-12T17:27:34.457Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-05-12T17:27:34.457Z] > authorizing via signed-in user (destevanbedoy@gmail.com)
+[debug] [2023-05-12T17:27:34.457Z] [iam] checking project whats-the-move-project-bb0b0 for permissions ["firebase.projects.get"]
+[debug] [2023-05-12T17:27:34.459Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/whats-the-move-project-bb0b0:testIamPermissions [none]
+[debug] [2023-05-12T17:27:34.459Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/whats-the-move-project-bb0b0:testIamPermissions x-goog-quota-user=projects/whats-the-move-project-bb0b0
+[debug] [2023-05-12T17:27:34.459Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/whats-the-move-project-bb0b0:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2023-05-12T17:27:34.683Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/whats-the-move-project-bb0b0:testIamPermissions 200
+[debug] [2023-05-12T17:27:34.684Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/whats-the-move-project-bb0b0:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2023-05-12T17:27:34.684Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/whats-the-move-project-bb0b0 [none]
+[debug] [2023-05-12T17:27:35.011Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/whats-the-move-project-bb0b0 200
+[debug] [2023-05-12T17:27:35.011Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/whats-the-move-project-bb0b0 {"projectId":"whats-the-move-project-bb0b0","projectNumber":"660621588489","displayName":"Whats-the-move-project","name":"projects/whats-the-move-project-bb0b0","resources":{"hostingSite":"whats-the-move-project-bb0b0"},"state":"ACTIVE","etag":"1_d386172c-9c1f-4c30-b7e2-1d863d51c860"}
+[info] 
+[info] === Serving from 'C:\Users\deste\whats-the-move-class-project'...
+[info] 
+[debug] [2023-05-12T17:27:35.020Z] defaultcredentials: writing to file C:\Users\deste\AppData\Roaming\firebase\destevanbedoy_gmail_com_application_default_credentials.json
+[debug] [2023-05-12T17:27:35.022Z] Setting GAC to C:\Users\deste\AppData\Roaming\firebase\destevanbedoy_gmail_com_application_default_credentials.json {"metadata":{"emulator":{"name":"functions"},"message":"Setting GAC to C:\\Users\\deste\\AppData\\Roaming\\firebase\\destevanbedoy_gmail_com_application_default_credentials.json"}}
+[debug] [2023-05-12T17:27:35.023Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/whats-the-move-project-bb0b0/adminSdkConfig [none]
+[debug] [2023-05-12T17:27:35.216Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/whats-the-move-project-bb0b0/adminSdkConfig 200
+[debug] [2023-05-12T17:27:35.216Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/whats-the-move-project-bb0b0/adminSdkConfig {"projectId":"whats-the-move-project-bb0b0","storageBucket":"whats-the-move-project-bb0b0.appspot.com"}
+[debug] [2023-05-12T17:27:35.232Z] Error: listen EADDRINUSE: address already in use 127.0.0.1:5000
+    at Server.setupListenHandle [as _listen2] (node:net:1740:16)
+    at listenInCluster (node:net:1788:12)
+    at GetAddrInfoReqWrap.doListen [as callback] (node:net:1937:7)
+    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:8)
+[error] 
+[error] Error: An unexpected error has occurred.
+[info] i  functions: Watching "C:\Users\deste\whats-the-move-class-project\functions" for Cloud Functions... {"metadata":{"emulator":{"name":"functions"},"message":"Watching \"C:\\Users\\deste\\whats-the-move-class-project\\functions\" for Cloud Functions..."}}
+[debug] [2023-05-12T17:55:19.058Z] ----------------------------------------------------------------------
+[debug] [2023-05-12T17:55:19.062Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\deste\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js serve
+[debug] [2023-05-12T17:55:19.063Z] CLI Version:   12.0.0
+[debug] [2023-05-12T17:55:19.063Z] Platform:      win32
+[debug] [2023-05-12T17:55:19.064Z] Node Version:  v18.16.0
+[debug] [2023-05-12T17:55:19.065Z] Time:          Fri May 12 2023 10:55:19 GMT-0700 (Pacific Daylight Time)
+[debug] [2023-05-12T17:55:19.065Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-05-12T17:55:19.327Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-05-12T17:55:19.328Z] > authorizing via signed-in user (destevanbedoy@gmail.com)
+[debug] [2023-05-12T17:55:19.328Z] [iam] checking project whats-the-move-project-bb0b0 for permissions ["firebase.projects.get"]
+[debug] [2023-05-12T17:55:19.331Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/whats-the-move-project-bb0b0:testIamPermissions [none]
+[debug] [2023-05-12T17:55:19.332Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/whats-the-move-project-bb0b0:testIamPermissions x-goog-quota-user=projects/whats-the-move-project-bb0b0
+[debug] [2023-05-12T17:55:19.332Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/whats-the-move-project-bb0b0:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2023-05-12T17:55:19.451Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/whats-the-move-project-bb0b0:testIamPermissions 200
+[debug] [2023-05-12T17:55:19.452Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/whats-the-move-project-bb0b0:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2023-05-12T17:55:19.454Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/whats-the-move-project-bb0b0 [none]
+[debug] [2023-05-12T17:55:19.776Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/whats-the-move-project-bb0b0 200
+[debug] [2023-05-12T17:55:19.777Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/whats-the-move-project-bb0b0 {"projectId":"whats-the-move-project-bb0b0","projectNumber":"660621588489","displayName":"Whats-the-move-project","name":"projects/whats-the-move-project-bb0b0","resources":{"hostingSite":"whats-the-move-project-bb0b0"},"state":"ACTIVE","etag":"1_d386172c-9c1f-4c30-b7e2-1d863d51c860"}
+[info] 
+[info] === Serving from 'C:\Users\deste\whats-the-move-class-project'...
+[info] 
+[debug] [2023-05-12T17:55:19.784Z] defaultcredentials: writing to file C:\Users\deste\AppData\Roaming\firebase\destevanbedoy_gmail_com_application_default_credentials.json
+[debug] [2023-05-12T17:55:19.786Z] Setting GAC to C:\Users\deste\AppData\Roaming\firebase\destevanbedoy_gmail_com_application_default_credentials.json {"metadata":{"emulator":{"name":"functions"},"message":"Setting GAC to C:\\Users\\deste\\AppData\\Roaming\\firebase\\destevanbedoy_gmail_com_application_default_credentials.json"}}
+[debug] [2023-05-12T17:55:19.787Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/whats-the-move-project-bb0b0/adminSdkConfig [none]
+[debug] [2023-05-12T17:55:19.990Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/whats-the-move-project-bb0b0/adminSdkConfig 200
+[debug] [2023-05-12T17:55:19.991Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/whats-the-move-project-bb0b0/adminSdkConfig {"projectId":"whats-the-move-project-bb0b0","storageBucket":"whats-the-move-project-bb0b0.appspot.com"}
+[debug] [2023-05-12T17:55:20.004Z] Error: listen EADDRINUSE: address already in use 127.0.0.1:5000
+    at Server.setupListenHandle [as _listen2] (node:net:1740:16)
+    at listenInCluster (node:net:1788:12)
+    at GetAddrInfoReqWrap.doListen [as callback] (node:net:1937:7)
+    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:8)
+[error] 
+[error] Error: An unexpected error has occurred.
+[info] i  functions: Watching "C:\Users\deste\whats-the-move-class-project\functions" for Cloud Functions... {"metadata":{"emulator":{"name":"functions"},"message":"Watching \"C:\\Users\\deste\\whats-the-move-class-project\\functions\" for Cloud Functions..."}}
+[debug] [2023-05-12T17:55:20.013Z] Validating nodejs source
+[debug] [2023-05-12T17:55:34.389Z] ----------------------------------------------------------------------
+[debug] [2023-05-12T17:55:34.391Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\deste\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js serve
+[debug] [2023-05-12T17:55:34.391Z] CLI Version:   12.0.0
+[debug] [2023-05-12T17:55:34.392Z] Platform:      win32
+[debug] [2023-05-12T17:55:34.392Z] Node Version:  v18.16.0
+[debug] [2023-05-12T17:55:34.392Z] Time:          Fri May 12 2023 10:55:34 GMT-0700 (Pacific Daylight Time)
+[debug] [2023-05-12T17:55:34.393Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-05-12T17:55:34.507Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-05-12T17:55:34.507Z] > authorizing via signed-in user (destevanbedoy@gmail.com)
+[debug] [2023-05-12T17:55:34.507Z] [iam] checking project whats-the-move-project-bb0b0 for permissions ["firebase.projects.get"]
+[debug] [2023-05-12T17:55:34.509Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/whats-the-move-project-bb0b0:testIamPermissions [none]
+[debug] [2023-05-12T17:55:34.509Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/whats-the-move-project-bb0b0:testIamPermissions x-goog-quota-user=projects/whats-the-move-project-bb0b0
+[debug] [2023-05-12T17:55:34.509Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/whats-the-move-project-bb0b0:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2023-05-12T17:55:34.730Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/whats-the-move-project-bb0b0:testIamPermissions 200
+[debug] [2023-05-12T17:55:34.731Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/whats-the-move-project-bb0b0:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2023-05-12T17:55:34.732Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/whats-the-move-project-bb0b0 [none]
+[debug] [2023-05-12T17:55:35.141Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/whats-the-move-project-bb0b0 200
+[debug] [2023-05-12T17:55:35.141Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/whats-the-move-project-bb0b0 {"projectId":"whats-the-move-project-bb0b0","projectNumber":"660621588489","displayName":"Whats-the-move-project","name":"projects/whats-the-move-project-bb0b0","resources":{"hostingSite":"whats-the-move-project-bb0b0"},"state":"ACTIVE","etag":"1_d386172c-9c1f-4c30-b7e2-1d863d51c860"}
+[info] 
+[info] === Serving from 'C:\Users\deste\whats-the-move-class-project'...
+[info] 
+[debug] [2023-05-12T17:55:35.146Z] defaultcredentials: writing to file C:\Users\deste\AppData\Roaming\firebase\destevanbedoy_gmail_com_application_default_credentials.json
+[debug] [2023-05-12T17:55:35.147Z] Setting GAC to C:\Users\deste\AppData\Roaming\firebase\destevanbedoy_gmail_com_application_default_credentials.json {"metadata":{"emulator":{"name":"functions"},"message":"Setting GAC to C:\\Users\\deste\\AppData\\Roaming\\firebase\\destevanbedoy_gmail_com_application_default_credentials.json"}}
+[debug] [2023-05-12T17:55:35.148Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/whats-the-move-project-bb0b0/adminSdkConfig [none]
+[debug] [2023-05-12T17:55:35.485Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/whats-the-move-project-bb0b0/adminSdkConfig 200
+[debug] [2023-05-12T17:55:35.486Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/whats-the-move-project-bb0b0/adminSdkConfig {"projectId":"whats-the-move-project-bb0b0","storageBucket":"whats-the-move-project-bb0b0.appspot.com"}
+[debug] [2023-05-12T17:55:35.498Z] Error: listen EADDRINUSE: address already in use 127.0.0.1:5000
+    at Server.setupListenHandle [as _listen2] (node:net:1740:16)
+    at listenInCluster (node:net:1788:12)
+    at GetAddrInfoReqWrap.doListen [as callback] (node:net:1937:7)
+    at GetAddrInfoReqWrap.onlookup [as oncomplete] (node:dns:109:8)
+[error] 
+[error] Error: An unexpected error has occurred.
+[info] i  functions: Watching "C:\Users\deste\whats-the-move-class-project\functions" for Cloud Functions... {"metadata":{"emulator":{"name":"functions"},"message":"Watching \"C:\\Users\\deste\\whats-the-move-class-project\\functions\" for Cloud Functions..."}}
+[debug] [2023-05-12T17:55:35.506Z] Validating nodejs source

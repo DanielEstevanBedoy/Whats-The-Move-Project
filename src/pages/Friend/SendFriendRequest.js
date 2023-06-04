@@ -11,7 +11,7 @@ function SendFriendRequest() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const usersRef = db.ref('Users');
+        const usersRef = db.ref(`Users`);
         usersRef.once('value', (snapshot) => {
             let uid = null;
             snapshot.forEach(data => {

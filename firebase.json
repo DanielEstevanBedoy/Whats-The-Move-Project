@@ -1,0 +1,6 @@
+{
+  "functions": {
+    "source": "functions",
+    "ignore": ["firebase-debug.log", "**/node_modules/**"]
+  }
+}
