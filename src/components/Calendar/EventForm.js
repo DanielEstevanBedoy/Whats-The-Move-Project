@@ -48,30 +48,19 @@ export default function EventForm() {
     case "6":
       formPositionClasses = "justify-end right-11.7";
       break;
+    default:
+      throw new Error();
   }
 
   function handleSubmit(event) {
     event.preventDefault(); // disable page reload
-    const currentUser = auth.currentUser;
-    const eventId = selectedEvent ? selectedEvent.id : push(ref(db, `Users/${currentUser.uid}/Events`)).key; 
     const calendarEvent = {
       title,
       description,
       label: selectedLabel,
       day: daySelected.valueOf(),
-      id: eventId,
+      id: selectedEvent ? selectedEvent.id : Date.now(),
     };
-    
-    set(ref(db, `Users/${currentUser.uid}/Events/${eventId}`), calendarEvent)
-    .then(() => {
-      console.log('Event created successfully!');
-      setTitle('');
-      setDescription('');
-      setSelectedLabel(labels[0]);
-    })
-    .catch((error) => {
-      console.error('Error creating event:', error);
-    });
 
 
     if (selectedEvent)
@@ -100,7 +89,7 @@ export default function EventForm() {
                 onClick={() => {
                   dispatchEvent({
                     type: "REMOVE_EVENT",
-                    payload: selectedEvent,
+                    eventData: selectedEvent,
                   });
                   setShowEventForm(false);
                 }}
@@ -146,7 +135,7 @@ export default function EventForm() {
               onChange={(event) => setDescription(event.target.value)}
             />
             <span className="material-icons-outlined text-gray-400">
-              bookmark_border
+              group
             </span>
             <div className="flex gap-x-2">
               {labels.map((lbl, i) => (

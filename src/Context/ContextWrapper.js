@@ -1,5 +1,5 @@
 import React, { useReducer, useState, useEffect } from "react";
-import { ref, set, update, get, push, remove, child } from "firebase/database";
+import { ref, set, update, get, remove, child } from "firebase/database";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../utils/firebase";
 import GlobalContext from "./GlobalContext";
@@ -85,6 +85,10 @@ export default function ContextWrapper(props) {
 
   const [savedEvents, dispatchEvent] = useReducer(savedEventsReducer, []);
 
+  /* The function passed to useEffect will run everytime savedEvents changes. 
+  When you create or update events, these are stored in localStorage under the 
+  key "savedEvents". 
+  */
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -104,7 +108,6 @@ export default function ContextWrapper(props) {
     if (initialized && auth.currentUser) {
       const userEventsRef = ref(db, `Users/${auth.currentUser.uid}/Events`);
       get(userEventsRef).then((snapshot) => {
-        const data = snapshot.val();
         // Check if the user has any events in the database
         set(userEventsRef, savedEvents);
         // if (data) {
@@ -119,8 +122,8 @@ export default function ContextWrapper(props) {
   
 
   useEffect(() => {
-    if(!showEventForm) {
-        setSelectedEvent(null);
+    if (!showEventForm) {
+      setSelectedEvent(null);
     }
   }, [showEventForm]);
 
@@ -135,7 +138,7 @@ export default function ContextWrapper(props) {
         setShowEventForm,
         dispatchEvent,
         savedEvents,
-        selectedEvent, 
+        selectedEvent,
         setSelectedEvent,
       }}
     >

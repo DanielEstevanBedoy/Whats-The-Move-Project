@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { auth, db } from '../../utils/firebase'; // Update the path to your Firebase configuration file
 import { ref, push, set, onValue } from 'firebase/database';
+import { Route, Routes, Link } from 'react-router-dom';
+import PastEvents from "./PastEvents";
+import FutureEvents from "./UpcomingEvents";
 
 function Events() {
   const [events, setEvents] = useState([]);
@@ -53,29 +56,17 @@ function Events() {
   
   return (
     <div>
-      <h2>Events page</h2>
-      <div>
-        {events.map((event) => (
-          <div key={event.id}>
-            <h3>{event.name}</h3>
-            <p>Date: {event.date}</p>
-            <p>Description: {event.time}</p>
-          </div>
-        ))}
-      </div>
-      <div>
-        <label>Event Name:</label>
-        <input type="text" value={eventName} onChange={(e) => setEventName(e.target.value)} />
-      </div>
-      <div>
-        <label>Event Date:</label>
-        <input type="text" value={eventDate} onChange={(e) => setEventDate(e.target.value)} />
-      </div>
-      <div>
-        <label>Event Description:</label>
-        <input type="text" value={eventDescription} onChange={(e) => setEventDescription(e.target.value)} />
-      </div>
-      <button onClick={handleCreateEvent}>Create Event</button>
+	<h2>Events page</h2>
+	<div>
+            <nav className="navbar">
+                <Link to="/PastEvents" className="nav-link"><button className="nav-button">Past Events</button></Link>
+	        <Link to="/FutureEvents" className="nav-link"><button className="nav-button">Upcoming Events</button></Link>
+            </nav>
+            <Routes>
+                <Route path="/PastEvents" element={<PastEvents/>} />
+	        <Route path="/FutureEvents" element={<FutureEvents/>} />
+            </Routes>  
+        </div>
     </div>
   );
 }
