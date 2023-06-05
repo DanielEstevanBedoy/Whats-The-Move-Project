@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { auth, db } from '../../utils/firebase'; // Update the path to your Firebase configuration file
 import { ref, push, set, onValue } from 'firebase/database';
+//import { BrowserRouter } from 'react-router-dom';
+
+import PastEvents from "./PastEvents";
+import FutureEvents from "./UpcomingEvents";
+import {useAuthState} from 'react-firebase-hooks/auth';
+import { BrowserRouter, Route, Routes, Link, useNavigate } from 'react-router-dom';
+
+
 
 function Events() {
   const [events, setEvents] = useState([]);
@@ -55,15 +63,11 @@ function Events() {
     <div>
 	<h2>Events page</h2>
 	<div>
-            <nav className="navbar">
-                <Link to="/PastEvents" className="nav-link"><button className="nav-button">Past Events</button></Link>
-	        <Link to="/FutureEvents" className="nav-link"><button className="nav-button">Upcoming Events</button></Link>
-            </nav>
-            <Routes>
-                <Route path="/PastEvents" element={<PastEvents/>} />
-	        <Route path="/FutureEvents" element={<FutureEvents/>} />
-            </Routes>  
+                
+
+  
         </div>
+        
     </div>
   );
 }

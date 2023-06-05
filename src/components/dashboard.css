@@ -34,8 +34,8 @@
     background-color: #0056b3;
 }
 .signout-button {
-    color: white;
-    background-color: red;
+    color: #fdf9f9;
+    background-color: rgb(238, 15, 15);
     border: none;
     padding: 10px 20px;
     text-align: center;
