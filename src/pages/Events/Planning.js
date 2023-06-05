@@ -2,7 +2,7 @@ import React, { useContext, useEffect,  useState } from "react";
 import GlobalContext from "../../Context/GlobalContext";
 import dayjs from "dayjs";
 import { auth, db } from "../../utils/firebase";
-import { ref, set, get, onValue } from "firebase/database";
+import { ref, set, get, onValue, update } from "firebase/database";
 
 export default function Events({ lookForward }) {
     const [sortedEvents, setSortedEvents] = useState([]);
@@ -19,6 +19,9 @@ export default function Events({ lookForward }) {
 
 		    const data = snapshot.val();
 		    const parsedEvents = data ? Object.values(data) : [];
+		    parsedEvents.map((event, index) => (
+			{...event, id: (index - 1)}
+		    ));
 		    return parsedEvents;
 		} catch (error) {
 		    console.log("Error fetching user events:", error);
@@ -49,15 +52,19 @@ export default function Events({ lookForward }) {
         setFile(e.target.files[0]);
     }
 
-    const handleImageUpload = async () => {
+    const handleImageUpload = async (id) => {
 	if (file) {
 	    const reader = new FileReader();
 	    reader.readAsDataURL(file);
 	    reader.onloadend = async () => {
 		const base64String = reader.result.split(',')[1];
-		const dbRef = ref(db, `Users/${auth.currentUser.uid}/Events/images`);
-		await set(dbRef, base64String);
-		console.log('Image uploaded successfully!');
+		const dbRef = ref(db, `Users/${auth.currentUser.uid}/Events/${id}`);
+		try {
+		    await update(dbRef, { image: base64String });
+		    console.log('Image uploaded successfully!');
+		} catch(error) {
+		    console.log("Error adding attribute: ", error);
+		}
 	    };
 	}
     };
@@ -82,10 +89,6 @@ export default function Events({ lookForward }) {
 	return blob;
     };
 	
-   // const decodedImageBlob = b64toBlob(base64String, 'image/jpeg');
-   // const imageURL = URL.createObjectURL(decodedImageBlob);
-   // <img src="imageURL" alt="">
-    
 	
     
     
@@ -98,17 +101,17 @@ export default function Events({ lookForward }) {
 		{(!lookForward) ?
 		<div>
 		    <input type="file" onChange={handleChange} />
-		    <button onClick={handleImageUpload}>Upload Image</button>
+		    <button onClick={() => handleImageUpload(event.id)}>Upload Image</button>
 		</div>
-		 :
-		 null
-		}
+		 :null}
+		{ (!lookForward) ? ((event.image) ? <img src={URL.createObjectURL(b64toBlob(event.image, 'image/jpeg'))} alt=""className="w-3/12"  /> :null) : null }
 	    </div>
 	    ))}
 	</>
-	
-	);
+    );
 }
+
+
 
 function compareGT( a, b )
 {

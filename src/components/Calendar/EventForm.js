@@ -1,5 +1,7 @@
 import React, { useState, useContext } from "react";
 import GlobalContext from "../../Context/GlobalContext";
+// import { auth, db } from '../../utils/firebase';
+// import { ref, set, push, onValue } from 'firebase/database';
 
 const labels = ["gray", "blue", "indigo", "green", "red", "purple"];
 
@@ -17,14 +19,8 @@ export default function EventForm() {
     useContext(GlobalContext);
 
   const [title, setTitle] = useState(selectedEvent ? selectedEvent.title : "");
-  const [description, setDescription] = useState(
-    selectedEvent ? selectedEvent.description : ""
-  );
-  const [selectedLabel, setSelectedLabel] = useState(
-    selectedEvent
-      ? labels.find((lbl) => lbl === selectedEvent.label)
-      : labels[0]
-  );
+  const [description, setDescription] = useState(selectedEvent ? selectedEvent.description : "");
+  const [selectedLabel, setSelectedLabel] = useState(selectedEvent ? labels.find((lbl) => lbl === selectedEvent.label) : labels[0]);
 
   const dayOfTheWeek = daySelected.format("d");
 
@@ -63,13 +59,16 @@ export default function EventForm() {
       description,
       label: selectedLabel,
       day: daySelected.valueOf(),
-      id: selectedEvent ? selectedEvent.id : Date.now(),
+	id: selectedEvent ? selectedEvent.id : String(Date.now()),
+	image: null
     };
+
 
     if (selectedEvent)
       dispatchEvent({ type: "UPDATE_EVENT", payload: calendarEvent });
     else dispatchEvent({ type: "ADD_EVENT", payload: calendarEvent });
-    setShowEventForm(false);
+      // Shouldn't need to check if user is logged in, because user can only create events if logged in
+      setShowEventForm(false);
   }
 
   return (
@@ -89,7 +88,7 @@ export default function EventForm() {
                 onClick={() => {
                   dispatchEvent({
                     type: "REMOVE_EVENT",
-                    eventData: selectedEvent,
+                    payload: selectedEvent,
                   });
                   setShowEventForm(false);
                 }}
