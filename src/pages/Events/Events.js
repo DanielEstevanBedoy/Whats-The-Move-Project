@@ -1,58 +1,58 @@
-import React, { useEffect, useState } from 'react';
-import { auth, db } from '../../utils/firebase'; // Update the path to your Firebase configuration file
-import { ref, push, set, onValue } from 'firebase/database';
+// import React, { useEffect, useState } from 'react';
+// import { auth, db } from '../../utils/firebase'; // Update the path to your Firebase configuration file
+// import { ref, push, set, onValue } from 'firebase/database';
 import { Route, Routes, Link } from 'react-router-dom';
 import PastEvents from "./PastEvents";
 import FutureEvents from "./UpcomingEvents";
 
 function Events() {
-  const [events, setEvents] = useState([]);
-  const [eventName, setEventName] = useState('');
-  const [eventDate, setEventDate] = useState('');
-  const [eventDescription, setEventDescription] = useState('');
-  const currentUser = auth.currentUser;
+  // const [events, setEvents] = useState([]);
+  // const [eventName, setEventName] = useState('');
+  // const [eventDate, setEventDate] = useState('');
+  // const [eventDescription, setEventDescription] = useState('');
+  // const currentUser = auth.currentUser;
 
-  useEffect(() => {
-    if (currentUser) {
-      const eventsRef = ref(db, `Users/${currentUser.uid}/Events`);
-      onValue(eventsRef, (snapshot) => {
-        const eventsData = snapshot.val();
-        if (eventsData) {
-          const eventsList = Object.entries(eventsData).map(([id, event]) => ({
-            id,
-            ...event
-          }));
-          setEvents(eventsList);
-        }
-      });
-    }
-  }, [currentUser]);
+  // useEffect(() => {
+  //   if (currentUser) {
+  //     const eventsRef = ref(db, `Users/${currentUser.uid}/Events`);
+  //     onValue(eventsRef, (snapshot) => {
+  //       const eventsData = snapshot.val();
+  //       if (eventsData) {
+  //         const eventsList = Object.entries(eventsData).map(([id, event]) => ({
+  //           id,
+  //           ...event
+  //         }));
+  //         setEvents(eventsList);
+  //       }
+  //     });
+  //   }
+  // }, [currentUser]);
 
-  const handleCreateEvent = () => {
-    if (eventName && eventDate && eventDescription) {
-      const eventId = push(ref(db, `Users/${currentUser.uid}/Events`)).key;
+  // const handleCreateEvent = () => {
+  //   if (eventName && eventDate && eventDescription) {
+  //     const eventId = push(ref(db, `Users/${currentUser.uid}/Events`)).key;
   
-      const eventData = {
-        name: eventName,
-        date: eventDate,
-        description: eventDescription,
-        userId: currentUser.uid
-      };
+  //     const eventData = {
+  //       name: eventName,
+  //       date: eventDate,
+  //       description: eventDescription,
+  //       userId: currentUser.uid
+  //     };
   
-      set(ref(db, `Users/${currentUser.uid}/Events/${eventId}`), eventData)
-        .then(() => {
-          console.log('Event created successfully!');
-          setEventName('');
-          setEventDate('');
-          setEventDescription('');
-        })
-        .catch((error) => {
-          console.error('Error creating event:', error);
-        });
-    } else {
-      console.log('Please enter all event details');
-    }
-  };
+  //     set(ref(db, `Users/${currentUser.uid}/Events/${eventId}`), eventData)
+  //       .then(() => {
+  //         console.log('Event created successfully!');
+  //         setEventName('');
+  //         setEventDate('');
+  //         setEventDescription('');
+  //       })
+  //       .catch((error) => {
+  //         console.error('Error creating event:', error);
+  //       });
+  //   } else {
+  //     console.log('Please enter all event details');
+  //   }
+  // };
   
   return (
     <div>
