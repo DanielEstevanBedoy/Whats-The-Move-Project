@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import GlobalContext from "../../Context/GlobalContext";
-import { auth, db } from '../../utils/firebase';
-import { ref, set, push, onValue } from 'firebase/database';
+// import { auth, db } from '../../utils/firebase';
+// import { ref, set, push, onValue } from 'firebase/database';
 
 const labels = ["gray", "blue", "indigo", "green", "red", "purple"];
 
@@ -59,7 +59,7 @@ export default function EventForm() {
       description,
       label: selectedLabel,
       day: daySelected.valueOf(),
-      id: selectedEvent ? selectedEvent.id : Date.now(),
+      id: selectedEvent ? selectedEvent.id : String(Date.now()),
     };
 
 
@@ -89,7 +89,7 @@ export default function EventForm() {
                 onClick={() => {
                   dispatchEvent({
                     type: "REMOVE_EVENT",
-                    eventData: selectedEvent,
+                    payload: selectedEvent,
                   });
                   setShowEventForm(false);
                 }}
