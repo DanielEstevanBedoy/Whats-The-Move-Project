@@ -48,9 +48,9 @@ export default function Dashboard(){
                 <Routes>
                     <Route path="/CalendarPage" element={<CalendarPage />} />
                     <Route path="/Friends" element={<Friends/>} />
-	            <Route path="/Events" element={<Events/>} />
-                    <Route path="/PastEvents" element={<PastEvents/>} />
-	            <Route path="/FutureEvents" element={<FutureEvents/>} />
+	            <Route path="/Events/*" element={<Events/>} />
+                    <Route path="/PastEvents/*" element={<PastEvents/>} />
+	            <Route path="/FutureEvents/*" element={<FutureEvents/>} />
                     <Route path="/login" element={<Login/>} />
                 </Routes>  
             </BrowserRouter>

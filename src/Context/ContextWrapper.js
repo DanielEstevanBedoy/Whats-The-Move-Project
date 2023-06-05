@@ -6,7 +6,6 @@ import GlobalContext from "./GlobalContext";
 import dayjs from "dayjs";
 
 /* Reducer function takes current state and an action, and returns the new state */
-/* Reducer function takes current state and an action, and returns the new state */
 function savedEventsReducer(state, { type, payload }) {
   switch (type) {
     case "ADD_EVENT":
