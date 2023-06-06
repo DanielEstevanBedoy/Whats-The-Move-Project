@@ -24,6 +24,9 @@ const GlobalContext = React.createContext({
     showCloseFriendEvents: true,  // set default to true
     setShowCloseFriendEvents: () => {},
 
+    // Is Close Friend Contexts
+    isCloseFriend: [],
+    setIsCloseFriend: () => {},
 });
 
 export default GlobalContext;

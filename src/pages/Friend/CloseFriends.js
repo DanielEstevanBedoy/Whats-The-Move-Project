@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import GlobalContext from "../../Context/GlobalContext";
 import {
   getDatabase,
   ref,
@@ -10,6 +11,7 @@ import {
 function CloseFriends() {
   const [loading, setLoading] = useState(true);
   const [closeFriends, setCloseFriends] = useState([]);
+  const { isCloseFriend, setIsCloseFriend } = useContext(GlobalContext);
   const db = getDatabase();
   const auth = getAuth();
 
@@ -25,6 +27,7 @@ function CloseFriends() {
             const closeFriendIds = Object.keys(closeFriendsData).filter(
               (key) => closeFriendsData[key]
             );
+            setIsCloseFriend(closeFriendIds);
   
             // Now fetch the details of each close friend
             const promises = closeFriendIds.map((friendId) => {
@@ -54,6 +57,7 @@ function CloseFriends() {
           } else {
             setCloseFriends([]);
             setLoading(false);
+            setIsCloseFriend([]);
           }
         });
 

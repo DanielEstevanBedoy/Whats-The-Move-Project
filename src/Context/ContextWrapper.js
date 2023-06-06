@@ -364,7 +364,10 @@ export default function ContextWrapper(props) {
       setIsLoading(false); // And here
     }
   }, [auth.currentUser]);
-  
+
+    // Cool Button go BRRRRRR in CurrentFriends Component
+    const [isCloseFriend, setIsCloseFriend] = useState([]);
+    
 
   return (
     <GlobalContext.Provider
@@ -388,6 +391,8 @@ export default function ContextWrapper(props) {
         setCloseFriendEvents,
         showCloseFriendEvents,
         setShowCloseFriendEvents,
+        isCloseFriend, 
+        setIsCloseFriend
       }}
     >
       {props.children}

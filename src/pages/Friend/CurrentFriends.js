@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import GlobalContext from "../../Context/GlobalContext";
 import {
   getDatabase,
   ref,
@@ -11,6 +12,8 @@ function CurrentFriends() {
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
   const [closeFriends, setCloseFriends] = useState([]);
+  const { isCloseFriend, setIsCloseFriend } = useContext(GlobalContext);
+
   const db = getDatabase();
   const auth = getAuth();
 
@@ -62,6 +65,8 @@ function CurrentFriends() {
             const closeFriendIds = Object.keys(closeFriendsData).filter(
               (key) => closeFriendsData[key]
             );
+
+            setIsCloseFriend(closeFriendIds);
   
             // Now fetch the details of each close friend
             const promises = closeFriendIds.map((friendId) => {
@@ -120,7 +125,7 @@ function CurrentFriends() {
       await update(ref(db), updates);
     }
   };
-  
+
   const handleAddCloseFriend = async (friendId) => {
     const currentUserID = auth.currentUser.uid;
     
@@ -128,15 +133,15 @@ function CurrentFriends() {
     updates[`Users/${currentUserID}/closeFriends/${friendId}`] = true;
     
     await update(ref(db), updates);
+    setIsCloseFriend((prevCloseFriends) => [...prevCloseFriends, friendId]);
   };
 
   const handleRemoveCloseFriend = async (friendId) => {
-    if (window.confirm("Are you sure you want to remove this friend from close friends?")) {
-      const currentUserID = auth.currentUser.uid;
-      const updates = {};
-      updates[`Users/${currentUserID}/closeFriends/${friendId}`] = null;
-      await update(ref(db), updates);
-    }
+    const currentUserID = auth.currentUser.uid;
+    const updates = {};
+    updates[`Users/${currentUserID}/closeFriends/${friendId}`] = null;
+    await update(ref(db), updates);
+    setIsCloseFriend((prevCloseFriends) => prevCloseFriends.filter(id => id !== friendId));
   };
   
   if (loading) {
@@ -164,10 +169,10 @@ function CurrentFriends() {
                 Remove
               </button>
               <button
-                onClick={() => handleAddCloseFriend(friend.id)}
+                onClick={() => isCloseFriend.includes(friend.id) ? handleRemoveCloseFriend(friend.id) : handleAddCloseFriend(friend.id)}
                 className="px-3 py-1 bg-blue-500 text-white rounded-lg"
               >
-                Add to Close Friends
+                {isCloseFriend.includes(friend.id) ? 'Remove from Close Friends' : 'Add to Close Friends' }
               </button>
             </div>
           ))}
