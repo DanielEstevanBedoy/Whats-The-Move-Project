@@ -56,6 +56,9 @@ and returns them. If there are no events in localStorage, it returns an empty ar
 async function initEvents() {
   if (auth.currentUser) {
     const userEventsRef = ref(db, `Users/${auth.currentUser.uid}/Events`);
+    const userFriendsRef = ref(db, `Users/${auth.currentUser.uid}/friends`);
+    
+    // User events
     let parsedEvents = [];
     await get(userEventsRef).then((snapshot) => {
       const data = snapshot.val();
@@ -67,6 +70,31 @@ async function initEvents() {
             id: key, // Ensure the id is included in each event
           };
         });
+      }
+    });
+
+    // Friends events
+    await get(userFriendsRef).then(async (snapshot) => {
+      const friendsList = snapshot.val();
+      if (friendsList) {
+        const friendsEventsFetches = Object.keys(friendsList).map(
+          (friendId) => {
+            const friendEventsRef = ref(db, `Users/${friendId}/Events`);
+            return get(friendEventsRef).then((snapshot) => {
+              const friendEvents = snapshot.val() || {};
+              return Object.keys(friendEvents).map((key) => {
+                return {
+                  ...friendEvents[key],
+                  id: key,
+                };
+              });
+            });
+          }
+        );
+
+        const friendsEventsArrays = await Promise.all(friendsEventsFetches);
+        const combinedFriendsEvents = [].concat(...friendsEventsArrays);
+        parsedEvents = [...parsedEvents, ...combinedFriendsEvents]; // Merge your events and friends' events
       }
     });
     return parsedEvents;
