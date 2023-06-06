@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import GlobalContext from "../../Context/GlobalContext";
-// import { auth, db } from '../../utils/firebase';
+import { auth, db } from '../../utils/firebase';
 // import { ref, set, push, onValue } from 'firebase/database';
 
 const labels = ["gray", "blue", "indigo", "green", "red", "purple"];
@@ -60,6 +60,8 @@ export default function EventForm() {
       label: selectedLabel,
       day: daySelected.valueOf(),
       id: selectedEvent ? selectedEvent.id : String(Date.now()),
+      userEmail: auth.currentUser.email,
+      userName: auth.currentUser.displayName, 
     };
 
 
@@ -99,7 +101,7 @@ export default function EventForm() {
               </span>
             )}
             <button onClick={() => setShowEventForm(false)}>
-              <span className="material-icons-outlined text-gray-400">
+              <span className="material-icons-outlined text-gray-400 cursor-pointer">
                 close
               </span>
             </button>
