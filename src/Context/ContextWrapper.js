@@ -121,7 +121,7 @@ export default function ContextWrapper(props) {
    * Then, we are providing these values to all child components via the context provider.
    * We must store our state somewhere.
    */
-
+  const [showFriendsEvents, setShowFriendsEvents] = useState(true);
   const [initialized, setInitialized] = useState(true);
   const [monthIndex, setMonthIndex] = useState(dayjs().month());
   const [daySelected, setDaySelected] = useState(dayjs());
@@ -253,6 +253,8 @@ export default function ContextWrapper(props) {
         setSelectedEvent,
         friendsEvents,
         setFriendsEvents,
+        showFriendsEvents,
+        setShowFriendsEvents,
       }}
     >
       {props.children}
