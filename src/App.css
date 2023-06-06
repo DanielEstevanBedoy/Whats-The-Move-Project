@@ -1,9 +1,15 @@
 .App {
   text-align: center;
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  background-color: linear-gradient(79deg, #7439db, #C66FBC 48%, #F7944D);
+  
 }
 
 .App-logo {
-  height: 40vmin;
+  height: 35vmin;
   pointer-events: none;
 }
 
@@ -35,4 +41,39 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.center{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container{
+  max-width: 200px;
+  margin: 0 auto;
+
+ 
+}
+
+.card {
+  background-color: rgb(5, 83, 237);
+  border-radius: 5px;
+  padding: 10px 20px 30px;
+  margin-top: 50px;
+}
+
+.content{
+  margin-top: 20px;
+}
+
+
+.the-container {
+  position: relative;
+  height: 200px; /* Set the desired height for the container */
+}
+
+.background{
+  background-color: rgb(116, 140, 198);
 }

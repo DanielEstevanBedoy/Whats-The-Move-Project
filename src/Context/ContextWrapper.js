@@ -1,28 +1,26 @@
 import React, { useReducer, useState, useEffect } from "react";
-import { ref, set, update, get, remove, child, push, onValue } from "firebase/database";
+import {
+  ref,
+  set,
+  update,
+  get,
+  remove,
+  child,
+  onValue,
+  off,
+} from "firebase/database";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../utils/firebase";
 import GlobalContext from "./GlobalContext";
 import dayjs from "dayjs";
 
 /* Reducer function takes current state and an action, and returns the new state */
-/* Reducer function takes current state and an action, and returns the new state */
 function savedEventsReducer(state, { type, payload }) {
   switch (type) {
     case "ADD_EVENT":
       if (auth.currentUser) {
         const userEventsRef = ref(db, `Users/${auth.currentUser.uid}/Events`);
-        set(userEventsRef, payload.event);  // Directly save the new event in Firebase
-
-        // Friends
-        const friendEventsPromises = payload.friends.map((friendId) => {
-          const friendEventsRef = ref(db, `Users/${friendId}/SharedEvents`);
-          return set(friendEventsRef, payload.event);
-        });
-    
-        Promise.all(friendEventsPromises).catch((error) => {
-          console.error("Error adding event to friends:", error);
-        });
+        set(userEventsRef, payload); // Directly save the new event in Firebase
       }
       return [...state.events, payload.event];
 
@@ -42,7 +40,7 @@ function savedEventsReducer(state, { type, payload }) {
         });
       }
       return state.filter((event) => event.id !== payload.id);
-      
+
     case "UPDATE_EVENT":
       if (auth.currentUser) {
         const userEventsRef = ref(db, `Users/${auth.currentUser.uid}/Events`);
@@ -65,7 +63,6 @@ function savedEventsReducer(state, { type, payload }) {
   }
 }
 
-
 /* Initializes the state for useReducer. It retrieves events saved in the realtime database, parses them, 
 and returns them. If there are no events in localStorage, it returns an empty array. */
 async function initEvents() {
@@ -79,10 +76,13 @@ async function initEvents() {
     await get(userEventsRef).then((snapshot) => {
       const data = snapshot.val();
       if (data) {
-        parsedEvents = Object.keys(data).map((key) => ({
-          ...data[key],
-          id: key,
-        }));
+        // Convert the object into an array of events
+        parsedEvents = Object.keys(data).map((key) => {
+          return {
+            ...data[key],
+            id: key, // Ensure the id is included in each event
+          };
+        });
       }
     });
 
@@ -137,8 +137,10 @@ export default function ContextWrapper(props) {
   const [daySelected, setDaySelected] = useState(dayjs());
   const [showEventForm, setShowEventForm] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [savedEvents, dispatchEvent] = useReducer(savedEventsReducer, []);
+  const [friendsEvents, setFriendsEvents] = useState([]);
 
   /* The function passed to useEffect will run everytime savedEvents changes. 
   When you create or update events, these are stored in localStorage under the 
@@ -146,17 +148,22 @@ export default function ContextWrapper(props) {
   */
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
+      setIsLoading(true); // set isLoading to true right before you start fetching data
       if (user) {
         // User is signed in, fetch the events
-        initEvents().then(events => {
+        initEvents().then((events) => {
           dispatchEvent({ type: "INIT_EVENTS", payload: events });
-          setInitialized(true);
+          setIsLoading(false);
         });
       } else {
         // No user is signed in, clear the events
         dispatchEvent({ type: "CLEAR_EVENTS" });
+        setIsLoading(false);
       }
     });
+    return () => {
+      setIsLoading(true); // set isLoading to true when the component unmounts
+    };
   }, []);
 
   useEffect(() => {
@@ -174,7 +181,6 @@ export default function ContextWrapper(props) {
       });
     }
   }, [savedEvents, initialized]);
-  
 
   useEffect(() => {
     if (!showEventForm) {
@@ -182,9 +188,52 @@ export default function ContextWrapper(props) {
     }
   }, [showEventForm]);
 
+  useEffect(() => {
+    if (auth.currentUser) {
+      setIsLoading(true); // Set loading to true before starting to fetch
+      const userFriendsRef = ref(db, `Users/${auth.currentUser.uid}/friends`);
+      const friendsListListener = onValue(userFriendsRef, (snapshot) => {
+        const friendsList = snapshot.val();
+        if (friendsList) {
+          const friendsEventsFetches = Object.keys(friendsList).map(
+            (friendId) => {
+              const friendEventsRef = ref(db, `Users/${friendId}/Events`);
+              return get(friendEventsRef).then((snapshot) => {
+                const friendEvents = snapshot.val() || {};
+                return Object.keys(friendEvents).map((key) => {
+                  return {
+                    ...friendEvents[key],
+                    id: key, // Ensure the id is included in each event
+                  };
+                });
+              });
+            }
+          );
+          Promise.all(friendsEventsFetches).then((friendsEventsArrays) => {
+            const combinedFriendsEvents = [].concat(...friendsEventsArrays);
+            setFriendsEvents(combinedFriendsEvents);
+            setIsLoading(false); // Set loading to false after the data is fetched
+          });
+        } else {
+          setFriendsEvents([]);
+          setIsLoading(false); // And here as well
+        }
+      });
+
+      // Cleanup function to remove listener
+      return () => {
+        off(userFriendsRef, friendsListListener);
+      };
+    } else {
+      setFriendsEvents([]);
+      setIsLoading(false); // And here
+    }
+  }, [auth.currentUser]);
+
   return (
     <GlobalContext.Provider
       value={{
+        isLoading,
         monthIndex,
         setMonthIndex,
         daySelected,
@@ -195,6 +244,8 @@ export default function ContextWrapper(props) {
         savedEvents,
         selectedEvent,
         setSelectedEvent,
+        friendsEvents,
+        setFriendsEvents,
       }}
     >
       {props.children}
