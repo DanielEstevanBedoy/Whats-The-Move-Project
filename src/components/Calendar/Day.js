@@ -16,15 +16,18 @@ export default function Day({ day, rowIndex }) {
   const isToday = dayjs().isSame(dayjs(day), "day");
 
   const [todaysEvents, setTodaysEvents] = useState([]);
-  const { setDaySelected, setShowEventForm, savedEvents, setSelectedEvent } =
+  const { setDaySelected, setShowEventForm, savedEvents, friendsEvents, setSelectedEvent } =
     useContext(GlobalContext);
 
   useEffect(() => {
-    const events = savedEvents.filter(
+    // Combining savedEvents and friendsEvents
+    const allEvents = [...savedEvents, ...friendsEvents];
+
+    const events = allEvents.filter(
       (event) => dayjs(event.day).format("DD-MM-YY") === day.format("DD-MM-YY")
     );
     setTodaysEvents(events);
-  }, [savedEvents, day]);
+  }, [savedEvents, friendsEvents, day]);
 
   return (
     <div className="border border-gray-200 flex flex-col">

@@ -56,9 +56,8 @@ and returns them. If there are no events in localStorage, it returns an empty ar
 async function initEvents() {
   if (auth.currentUser) {
     const userEventsRef = ref(db, `Users/${auth.currentUser.uid}/Events`);
-    const userFriendsRef = ref(db, `Users/${auth.currentUser.uid}/friends`);
     
-    // User events
+    // User
     let parsedEvents = [];
     await get(userEventsRef).then((snapshot) => {
       const data = snapshot.val();
@@ -74,6 +73,17 @@ async function initEvents() {
     });
 
     // Friends events
+    return parsedEvents;
+  } else {
+    console.log("No user is signed in");
+    return [];
+  }
+}
+
+async function initFriendsEvents() {
+  if (auth.currentUser) {
+    const userFriendsRef = ref(db, `Users/${auth.currentUser.uid}/friends`);
+    let parsedFriendsEvents = [];
     await get(userFriendsRef).then(async (snapshot) => {
       const friendsList = snapshot.val();
       if (friendsList) {
@@ -91,18 +101,18 @@ async function initEvents() {
             });
           }
         );
-
         const friendsEventsArrays = await Promise.all(friendsEventsFetches);
         const combinedFriendsEvents = [].concat(...friendsEventsArrays);
-        parsedEvents = [...parsedEvents, ...combinedFriendsEvents]; // Merge your events and friends' events
+        parsedFriendsEvents = combinedFriendsEvents;
       }
     });
-    return parsedEvents;
+    return parsedFriendsEvents;
   } else {
     console.log("No user is signed in");
     return [];
   }
 }
+
 
 /* These values are now accessible by the useContext hook */
 export default function ContextWrapper(props) {
@@ -146,18 +156,35 @@ export default function ContextWrapper(props) {
     };
   }, []);
 
+
+  // this useEffect will handle friends events only
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      setIsLoading(true); // set isLoading to true right before you start fetching data
+      if (user) {
+        // User is signed in, fetch the friends' events
+        initFriendsEvents().then((events) => {
+          setFriendsEvents(events);
+          setIsLoading(false);
+        });
+      } else {
+        // No user is signed in, clear the events
+        setFriendsEvents([]);
+        setIsLoading(false);
+      }
+    });
+    return () => {
+      setIsLoading(true); // set isLoading to true when the component unmounts
+    };
+  }, []);
+
+
   useEffect(() => {
     if (initialized && auth.currentUser) {
       const userEventsRef = ref(db, `Users/${auth.currentUser.uid}/Events`);
       get(userEventsRef).then((snapshot) => {
         // Check if the user has any events in the database
         set(userEventsRef, savedEvents);
-        // if (data) {
-        //   // If they do, update the events with the current savedEvents
-        //   update(userEventsRef, savedEvents);
-        // } else {
-        //   // If they don't, set the events to the current savedEvents
-        // }
       });
     }
   }, [savedEvents, initialized]);
