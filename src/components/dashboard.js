@@ -2,7 +2,6 @@ import CalendarPage from "../pages/CalendarPage/CalendarPage";
 import Friends from "../pages/Friend/FriendsPage";
 import PastEvents from "../pages/Events/PastEvents";
 import FutureEvents from "../pages/Events/UpcomingEvents";
-import Events from "../pages/Events/Events";
 import { auth } from "../utils/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import {
