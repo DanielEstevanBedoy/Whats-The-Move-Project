@@ -11,6 +11,9 @@ const GlobalContext = React.createContext({
   savedEvents: [],
   selectedEvent: null,
   setSelectedEvent: () => {},
+  friendsEvents: [],
+  setFriendsEvents: () => {},
+//   isloading: true,
 });
 
 export default GlobalContext;
