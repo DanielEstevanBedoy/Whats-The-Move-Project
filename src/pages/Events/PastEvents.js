@@ -8,6 +8,7 @@ export default function PastEvents() {
     const { friendsEvents } = useContext(GlobalContext);
     const [sortedEvents, setSortedEvents] = useState([]);
     const [savedEvents, setSavedEvents] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
     const day = dayjs();
 
 
@@ -116,7 +117,24 @@ export default function PastEvents() {
 	<div className="flex justify-center h-screen bg-white mb-4">
 	    <div className="flex flex-col items-center h-full w-1/2 overflow-y-scroll pr-0">
 		<h1 className="text-4xl text-blue-500 my-8">Past Events</h1>
+		<div className="relative rounded-md shadow-sm mb-6">
+		    <span className="absolute inset-y-0 left-0 pl-3 flex items-center">
+			<span className="material-icons-outlined text-gray-400">
+			    search
+			</span>
+		    </span>
+		    <input
+			type="text"
+			placeholder="Search by user name..."
+			value={searchTerm}
+			onChange={(e) => setSearchTerm(e.target.value)}
+			className="pl-10 block w-full pr-12 sm:text-sm rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
+		    />
+		</div>
 		{sortedEvents
+		 .filter(
+		     (event) => event.userName.toLowerCase().includes(searchTerm.toLowerCase())
+		 )
 		 .map((event, index) => (
 		     <div
 			 key={index}
