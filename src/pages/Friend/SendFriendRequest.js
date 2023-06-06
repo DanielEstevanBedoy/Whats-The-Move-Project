@@ -6,8 +6,8 @@ import { getDatabase, ref, get, child, set, push } from "firebase/database";
 function SendFriendRequest() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState(null);
-  const auth = getAuth();
-  const db = getDatabase();
+  //const auth = getAuth();
+  //const db = getDatabase();
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
