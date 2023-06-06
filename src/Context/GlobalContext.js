@@ -11,11 +11,19 @@ const GlobalContext = React.createContext({
     savedEvents: [],
     selectedEvent: null,
     setSelectedEvent: () => {},
+    
+    // Friend Contexts
     friendsEvents: [],
     setFriendsEvents: () => {},
-    //   isloading: true,
     showFriendsEvents: true,  // set default to true
     setShowFriendsEvents: () => {},
+
+    // Close Friend Contexts
+    closeFriendEvents: [],
+    setCloseFriendEvents: () => {},
+    showCloseFriendEvents: true,  // set default to true
+    setShowCloseFriendEvents: () => {},
+
 });
 
 export default GlobalContext;

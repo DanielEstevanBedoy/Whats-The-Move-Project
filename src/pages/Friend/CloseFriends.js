@@ -53,6 +53,7 @@ function CloseFriends() {
   
           } else {
             setCloseFriends([]);
+            setLoading(false);
           }
         });
 

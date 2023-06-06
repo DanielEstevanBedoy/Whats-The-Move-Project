@@ -59,7 +59,35 @@ function CurrentFriends() {
         const closeFriendsDbUnsubscribe = onValue(closeFriendsRef, (snapshot) => {
           const closeFriendsData = snapshot.val();
           if (closeFriendsData) {
-            setCloseFriends(Object.keys(closeFriendsData));
+            const closeFriendIds = Object.keys(closeFriendsData).filter(
+              (key) => closeFriendsData[key]
+            );
+  
+            // Now fetch the details of each close friend
+            const promises = closeFriendIds.map((friendId) => {
+              return new Promise((resolve) => {
+                const friendRef = ref(db, `Users/${friendId}`);
+                onValue(friendRef, (friendSnap) => {
+                  const friendUserData = friendSnap.val();
+                  if (friendUserData) {
+                    resolve({
+                      id: friendId,
+                      name: friendUserData.displayName,
+                      photoURL: friendUserData.photoURL,
+                    });
+                  } else {
+                    console.warn(
+                      `User data for close friendID ${friendId} is not available.`
+                    );
+                  }
+                });
+              });
+            });
+            Promise.all(promises).then((friendData) => {
+              setCloseFriends(friendData);
+              setLoading(false);
+            });
+  
           } else {
             setCloseFriends([]);
           }
@@ -88,7 +116,7 @@ function CurrentFriends() {
       const updates = {};
       updates[`Users/${currentUserID}/friends/${friendId}`] = null;
       updates[`Users/${friendId}/friends/${currentUserID}`] = null;
-
+      updates[`Users/${currentUserID}/closeFriends/${friendId}`] = null;
       await update(ref(db), updates);
     }
   };

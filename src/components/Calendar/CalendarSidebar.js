@@ -3,10 +3,13 @@ import React, { useContext } from "react";
 import GlobalContext from "../../Context/GlobalContext";
 
 export default function CalendarSidebar() {
-  const { showFriendsEvents, setShowFriendsEvents } = useContext(GlobalContext);
+  const { showFriendsEvents, setShowFriendsEvents, showCloseFriendEvents, setShowCloseFriendEvents } = useContext(GlobalContext);
 
-  const handleToggleChange = (event) => {
+  const handleFriendToggleChange = (event) => {
     setShowFriendsEvents(event.target.checked);
+  };
+  const handleCloseFriendToggleChange = (event) => {
+    setShowCloseFriendEvents(event.target.checked);
   };
   
   return (
@@ -18,9 +21,18 @@ export default function CalendarSidebar() {
             type="checkbox"
             id="show-friends-events"
             checked={showFriendsEvents}
-            onChange={handleToggleChange}
+            onChange={handleFriendToggleChange}
           />
-          <span className="ml-2">Show Friends' Events</span>
+          <span className="ml-2">Friends</span>
+        </label>
+        <label htmlFor="show-close-friends-events" className="flex items-center">   {/* new label */}
+          <input
+            type="checkbox"
+            id="show-close-friends-events"
+            checked={showCloseFriendEvents}
+            onChange={handleCloseFriendToggleChange}
+          />
+          <span className="ml-2">Close Friends</span>
         </label>
       </div>
     </aside>
