@@ -36,7 +36,7 @@ export default function PastEvents() {
 	    }
 	};
 	fetchData();
-    }, [day.format("YYYYMMDD"), friendsEvents, savedEvents, auth.currentUser]);
+    }, [day.format("YYYYMMDD"), friendsEvents,  auth.currentUser]);
 
     function compareGT( a, b )
     {
@@ -80,6 +80,7 @@ export default function PastEvents() {
 		    images.push(base64String);
 		    await set(dbRef, images);
 		    console.log('Image uploaded successfully!');
+		    window.location.reload(true);
 		} catch(error) {
 		    console.log("Error adding attribute: ", error);
 		}
