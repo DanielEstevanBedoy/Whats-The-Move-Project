@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {db, auth} from "../../utils/firebase"
 import {
   getDatabase,
   ref,
@@ -13,8 +14,8 @@ import {
 function CurrentFriends() {
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
-  const db = getDatabase();
-  const auth = getAuth();
+  //const db = getDatabase();
+  //const auth = getAuth();
 
   useEffect(() => {
     const authUnsubscribe = onAuthStateChanged(auth, (user) => {

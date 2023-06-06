@@ -3,6 +3,7 @@ import Friends from "../pages/Friend/FriendsPage";
 import PastEvents from "../pages/Events/PastEvents";
 import FutureEvents from "../pages/Events/UpcomingEvents";
 import Events from "../pages/Events/Events";
+import FriendNotifications from "../pages/Friend/FriendNotifications";
 import { auth } from "../utils/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import {
@@ -15,6 +16,7 @@ import {
 import "./dashboard.css";
 import Login from "../pages/Login/login";
 import { useState } from "react";
+import Notification from "../pages/Events/notification";
 
 function AuthWrapper({ children }) {
   const [user, loading] = useAuthState(auth);
@@ -43,6 +45,7 @@ export default function Dashboard() {
   return (
     <BrowserRouter>
       <div className="min-h-screen bg-gray-100">
+        <Notification/>
         <div className="bg-white shadow px-6 py-4 flex justify-between items-center">
           <div className="flex space-x-4">
             <Link
