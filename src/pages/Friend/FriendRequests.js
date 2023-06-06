@@ -9,6 +9,7 @@ import {
   set,
   get,
   child,
+  update,
 } from "firebase/database";
 
 function FriendRequests() {
@@ -46,16 +47,27 @@ function FriendRequests() {
     };
   }, [auth, db]);
 
+  // const handleAcceptRequest = (requestId, senderID) => {
+  //   const currentUserID = auth.currentUser.uid;
+  //   const currentUserFriendsRef = ref(db, `Users/${currentUserID}/friends`);
+  //   const senderFriendsRef = ref(db, `Users/${senderID}/friends`);
+
+  //   set(child(currentUserFriendsRef, senderID), true);
+  //   set(child(senderFriendsRef, currentUserID), true);
+
+  //   const friendRequestsRef = ref(db, `Users/${currentUserID}/friendRequests`);
+  //   remove(child(friendRequestsRef, requestId));
+  // };
+
   const handleAcceptRequest = (requestId, senderID) => {
     const currentUserID = auth.currentUser.uid;
-    const currentUserFriendsRef = ref(db, `Users/${currentUserID}/friends`);
-    const senderFriendsRef = ref(db, `Users/${senderID}/friends`);
 
-    set(child(currentUserFriendsRef, senderID), true);
-    set(child(senderFriendsRef, currentUserID), true);
+    const updates = {};
+    updates[`Users/${currentUserID}/friends/${senderID}`] = true;
+    updates[`Users/${senderID}/friends/${currentUserID}`] = true;
+    updates[`Users/${currentUserID}/friendRequests/${requestId}`] = null;
 
-    const friendRequestsRef = ref(db, `Users/${currentUserID}/friendRequests`);
-    remove(child(friendRequestsRef, requestId));
+    update(ref(db), updates);
   };
 
   const handleDeclineRequest = async (requestId) => {
