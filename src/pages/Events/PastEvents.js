@@ -19,11 +19,12 @@ export default function PastEvents() {
 		    const snapshot = await get(userEventsRef);
 		    const data = snapshot.val();
 		    const parsedEvents = data ? Object.values(data) : [];
-		    parsedEvents.map((event, index) => ({
-			...event,
-			id: index - 1
-		    }))
-		    const allEvents = parsedEvents.concat(friendsEvents);
+		    const allEvents = parsedEvents
+			  .map((event, index) => ({
+			      ...event,
+			      id : index,
+			  }))
+			  .concat(friendsEvents);
 		    return allEvents;
 		} catch (error) {
 		    console.log("Error fetching user events:", error);
@@ -35,7 +36,7 @@ export default function PastEvents() {
 	    }
 	};
 	fetchData();
-    }, [day.format("YYYYMMDD")]);
+    }, [day.format("YYYYMMDD"), friendsEvents, savedEvents, auth.currentUser]);
 
     function compareGT( a, b )
     {
@@ -65,20 +66,20 @@ export default function PastEvents() {
         setFile(e.target.files[0]);
     }
 
-    const handleImageUpload = async (eventID) => {
+    const handleImageUpload = async (userID, eventID) => {
 	if (file) {
 	    const reader = new FileReader();
 	    reader.readAsDataURL(file);
 	    reader.onloadend = async () => {
 		const base64String = reader.result.split(',')[1];
-		const dbRef = ref(db, `Users/${auth.currentUser.uid}/Events/${eventID}/image`);
+		console.log("eventID: ", eventID);
+		const dbRef = ref(db, `Users/${userID}/Events/${eventID}/image`);
 		try {
 		    const snapshot = await get(dbRef);
-		    const images = snapshot.val() || [];
+		    const images = snapshot.val() ? Object.values(snapshot.val()) : [];
 		    images.push(base64String);
 		    await set(dbRef, images);
 		    console.log('Image uploaded successfully!');
-		    window.location.reload(true);
 		} catch(error) {
 		    console.log("Error adding attribute: ", error);
 		}
@@ -108,18 +109,6 @@ export default function PastEvents() {
 	}
     };
 
-    /*{event.image ? (
-			    event.image.map((image, i) => (
-			     <div key={i}>
-				 <img
-				     src={URL.createObjectURL(b64toBlob(image, "image/jpeg"))}
-				     alt=""
-				     className="w-6/12"
-				 />
-			     </div>
-			    ))
-			    ) : null}
-			    */
     
     
     return (
@@ -152,13 +141,10 @@ export default function PastEvents() {
 				 />
 			     </div>
 			 ))}
-			{(event.userName == auth.currentUser.displayName) ?
 			<div>
 			    <input type="file" onChange={(e) => handleChange(e)} />
-			    <button onClick={() => handleImageUpload(event.id)}>Upload Image</button>
+			    <button onClick={() => handleImageUpload(event.userID, event.id)}>Upload Image</button>
 			</div>
-			 :null}
-			
 		    </div>
 		 ))}
 	    </div>
@@ -166,9 +152,3 @@ export default function PastEvents() {
     );
 }
 
-
-function ImageCollection(eventID) {
-    
-    return (<></>);
-
-}

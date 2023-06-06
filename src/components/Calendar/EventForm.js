@@ -60,7 +60,8 @@ export default function EventForm() {
       label: selectedLabel,
       day: daySelected.valueOf(),
       id: selectedEvent ? selectedEvent.id : String(Date.now()),
-      image: [],
+	image: [],
+	userID: auth.currentUser.uid,
       userEmail: auth.currentUser.email,
       userName: auth.currentUser.displayName, 
     };
