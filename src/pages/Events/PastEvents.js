@@ -156,7 +156,7 @@ export default function PastEvents() {
 				 <img
 				     src={URL.createObjectURL(b64toBlob(image, "image/jpeg"))}
 				     alt=""
-				     className="w-6/12"
+				     className="w-6/12 mb-2"
 				 />
 			     </div>
 			 ))}
