@@ -58,6 +58,7 @@ function CurrentFriends() {
     };
   }, [auth, db]);
 
+  //TODO: handle deleting shared events from friend event list
   const handleRemoveFriend = async (friendId) => {
     if (window.confirm('Are you sure you want to remove this friend?')) {
       const currentUserID = auth.currentUser.uid;

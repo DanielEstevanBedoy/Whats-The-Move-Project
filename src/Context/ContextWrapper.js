@@ -1,5 +1,5 @@
 import React, { useReducer, useState, useEffect } from "react";
-import { ref, set, update, get, remove, child } from "firebase/database";
+import { ref, set, update, get, remove, child, push, onValue } from "firebase/database";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "../utils/firebase";
 import GlobalContext from "./GlobalContext";
@@ -12,15 +12,34 @@ function savedEventsReducer(state, { type, payload }) {
     case "ADD_EVENT":
       if (auth.currentUser) {
         const userEventsRef = ref(db, `Users/${auth.currentUser.uid}/Events`);
-        set(userEventsRef, payload);  // Directly save the new event in Firebase
+        set(userEventsRef, payload.event);  // Directly save the new event in Firebase
+
+        // Friends
+        const friendEventsPromises = payload.friends.map((friendId) => {
+          const friendEventsRef = ref(db, `Users/${friendId}/SharedEvents`);
+          return set(friendEventsRef, payload.event);
+        });
+    
+        Promise.all(friendEventsPromises).catch((error) => {
+          console.error("Error adding event to friends:", error);
+        });
       }
-      return [...state, payload];
+      return [...state.events, payload.event];
 
     case "REMOVE_EVENT":
       if (auth.currentUser) {
         const userEventsRef = ref(db, `Users/${auth.currentUser.uid}/Events`);
         const eventToRemoveRef = child(userEventsRef, payload.id);
         remove(eventToRemoveRef);
+
+        const friendEventsPromises = payload.friends.map((friendId) => {
+          const friendEventsRef = ref(db, `Users/${friendId}/SharedEvents`);
+          const eventToRemoveRef = child(friendEventsRef, payload.id);
+          return remove(eventToRemoveRef);
+        });
+        Promise.all(friendEventsPromises).catch((error) => {
+          console.error("Error removing event from friends:", error);
+        });
       }
       return state.filter((event) => event.id !== payload.id);
       
@@ -33,7 +52,10 @@ function savedEventsReducer(state, { type, payload }) {
       return state.map((event) => (event.id === payload.id ? payload : event));
 
     case "INIT_EVENTS":
-      return payload;
+      return {
+        events: payload.events,
+        friends: payload.friends,
+      };
 
     case "CLEAR_EVENTS":
       return [];
@@ -50,19 +72,52 @@ async function initEvents() {
   if (auth.currentUser) {
     const userEventsRef = ref(db, `Users/${auth.currentUser.uid}/Events`);
     let parsedEvents = [];
+    const friendsRef = ref(db, `Users/${auth.currentUser.uid}/friends`);
+    let friends = [];
+
+    // Retrieve user's events
     await get(userEventsRef).then((snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          // Convert the object into an array of events
-          parsedEvents = Object.keys(data).map(key => {
-            return {
-              ...data[key],
-              id: key // Ensure the id is included in each event
-            }
-          });
-        }
+      const data = snapshot.val();
+      if (data) {
+        parsedEvents = Object.keys(data).map((key) => ({
+          ...data[key],
+          id: key,
+        }));
+      }
     });
-    return parsedEvents;
+
+    // Retrieve friends' information
+    await get(friendsRef).then((snapshot) => {
+      const friendsData = snapshot.val();
+      if (friendsData) {
+        const friendIds = Object.keys(friendsData).filter(
+          (key) => friendsData[key]
+        );
+        const promises = friendIds.map((friendId) => {
+          return new Promise((resolve) => {
+            const friendRef = ref(db, `Users/${friendId}`);
+            onValue(friendRef, (friendSnapshot) => {
+              const friendData = friendSnapshot.val();
+              if (friendData) {
+                resolve({
+                  id: friendId,
+                  name: friendData.displayName,
+                  photoURL: friendData.photoURL,
+                });
+              } else {
+                console.warn(`Friend data for friendID ${friendId} is not available.`);
+                resolve(null);
+              }
+            });
+          });
+        });
+        Promise.all(promises).then((friendData) => {
+          friends = friendData.filter((friend) => friend !== null);
+        });
+      }
+    });
+
+    return { events: parsedEvents, friends };
   } else {
     console.log("No user is signed in");
     return [];
