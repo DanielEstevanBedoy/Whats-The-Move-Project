@@ -1,27 +1,30 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import GlobalContext from "../../Context/GlobalContext";
 import {db, auth} from "../../utils/firebase"
 import {
   getDatabase,
   ref,
   onValue,
-  off,
-  remove,
-  child,
   update,
 } from "firebase/database";
 
 function CurrentFriends() {
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
-  //const db = getDatabase();
-  //const auth = getAuth();
+  const [closeFriends, setCloseFriends] = useState([]);
+  const { isCloseFriend, setIsCloseFriend } = useContext(GlobalContext);
+
+  const db = getDatabase();
+  const auth = getAuth();
 
   useEffect(() => {
     const authUnsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         const friendsRef = ref(db, `Users/${user.uid}/friends`);
-        const dbUnsubscribe = onValue(friendsRef, (snapshot) => {
+        const closeFriendsRef = ref(db, `Users/${user.uid}/closeFriends`);
+
+        const friendsDbUnsubscribe = onValue(friendsRef, (snapshot) => {
           const friendsData = snapshot.val();
           if (friendsData) {
             const friendIds = Object.keys(friendsData).filter(
@@ -55,11 +58,54 @@ function CurrentFriends() {
             setLoading(false);
           }
         });
+
+        // Close friends
+        const closeFriendsDbUnsubscribe = onValue(closeFriendsRef, (snapshot) => {
+          const closeFriendsData = snapshot.val();
+          if (closeFriendsData) {
+            const closeFriendIds = Object.keys(closeFriendsData).filter(
+              (key) => closeFriendsData[key]
+            );
+
+            setIsCloseFriend(closeFriendIds);
+  
+            // Now fetch the details of each close friend
+            const promises = closeFriendIds.map((friendId) => {
+              return new Promise((resolve) => {
+                const friendRef = ref(db, `Users/${friendId}`);
+                onValue(friendRef, (friendSnap) => {
+                  const friendUserData = friendSnap.val();
+                  if (friendUserData) {
+                    resolve({
+                      id: friendId,
+                      name: friendUserData.displayName,
+                      photoURL: friendUserData.photoURL,
+                    });
+                  } else {
+                    console.warn(
+                      `User data for close friendID ${friendId} is not available.`
+                    );
+                  }
+                });
+              });
+            });
+            Promise.all(promises).then((friendData) => {
+              setCloseFriends(friendData);
+              setLoading(false);
+            });
+  
+          } else {
+            setCloseFriends([]);
+          }
+        });
+
         return () => {
-          dbUnsubscribe();
+          friendsDbUnsubscribe();
+          closeFriendsDbUnsubscribe();
         };
       } else {
         setFriends([]);
+        setCloseFriends([]);
         setLoading(false);
       }
     });
@@ -69,19 +115,6 @@ function CurrentFriends() {
     };
   }, [auth, db]);
 
-  // const handleRemoveFriend = async (friendId) => {
-  //   if (window.confirm('Are you sure you want to remove this friend?')) {
-  //     const currentUserID = auth.currentUser.uid;
-  //     const currentUserFriendsRef = ref(db, `Users/${currentUserID}/friends`);
-  //     const friendFriendsRef = ref(db, `Users/${friendId}/friends`);
-
-  //     await Promise.all([
-  //       remove(child(currentUserFriendsRef, friendId)),
-  //       remove(child(friendFriendsRef, currentUserID))
-  //     ]);
-  //   }
-  // };
-
   const handleRemoveFriend = async (friendId) => {
     if (window.confirm("Are you sure you want to remove this friend?")) {
       const currentUserID = auth.currentUser.uid;
@@ -89,15 +122,33 @@ function CurrentFriends() {
       const updates = {};
       updates[`Users/${currentUserID}/friends/${friendId}`] = null;
       updates[`Users/${friendId}/friends/${currentUserID}`] = null;
-
+      updates[`Users/${currentUserID}/closeFriends/${friendId}`] = null;
       await update(ref(db), updates);
     }
   };
 
+  const handleAddCloseFriend = async (friendId) => {
+    const currentUserID = auth.currentUser.uid;
+    
+    const updates = {};
+    updates[`Users/${currentUserID}/closeFriends/${friendId}`] = true;
+    
+    await update(ref(db), updates);
+    setIsCloseFriend((prevCloseFriends) => [...prevCloseFriends, friendId]);
+  };
+
+  const handleRemoveCloseFriend = async (friendId) => {
+    const currentUserID = auth.currentUser.uid;
+    const updates = {};
+    updates[`Users/${currentUserID}/closeFriends/${friendId}`] = null;
+    await update(ref(db), updates);
+    setIsCloseFriend((prevCloseFriends) => prevCloseFriends.filter(id => id !== friendId));
+  };
+  
   if (loading) {
     return <div>Loading...</div>;
   }
-
+  
   return (
     <div className="bg-white rounded shadow-lg p-6 mt-6">
       <h1 className="text-xl font-bold text-blue-500 mb-4">Current Friends</h1>
@@ -117,6 +168,12 @@ function CurrentFriends() {
                 className="px-3 py-1 bg-red-500 text-white rounded-lg"
               >
                 Remove
+              </button>
+              <button
+                onClick={() => isCloseFriend.includes(friend.id) ? handleRemoveCloseFriend(friend.id) : handleAddCloseFriend(friend.id)}
+                className="px-3 py-1 bg-blue-500 text-white rounded-lg"
+              >
+                {isCloseFriend.includes(friend.id) ? 'Remove from Close Friends' : 'Add to Close Friends' }
               </button>
             </div>
           ))}
