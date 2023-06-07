@@ -6,6 +6,7 @@ import { auth, db } from '../../utils/firebase';
 // import { ref, set, push, onValue } from 'firebase/database';
 
 const labels = ["gray", "blue", "indigo", "green", "red", "purple"];
+const visibilities = ["Private", "Public", "Close Friends"];
 
 const colorMap500 = {
   gray: "bg-gray-500",
@@ -22,6 +23,7 @@ export default function EventForm() {
   const inputRef = useRef(null);
   const { setShowEventForm, daySelected, dispatchEvent, selectedEvent } =
     useContext(GlobalContext);
+  const [visibility, setVisibility] = useState(selectedEvent ? selectedEvent.visibility : visibilities[0]);
 
   const [title, setTitle] = useState(selectedEvent ? selectedEvent.title : "");
   const [description, setDescription] = useState(selectedEvent ? selectedEvent.description : "");
@@ -100,8 +102,11 @@ export default function EventForm() {
       label: selectedLabel,
       day: daySelected.valueOf(),
       id: selectedEvent ? selectedEvent.id : String(Date.now()),
+	    image: [],
+	    userID: auth.currentUser.uid,
       userEmail: auth.currentUser.email,
-      userName: auth.currentUser.displayName, 
+      userName: auth.currentUser.displayName,
+      visibility,
 
     };
 
@@ -111,10 +116,8 @@ export default function EventForm() {
       dispatchEvent({ type: "UPDATE_EVENT", payload: calendarEvent });
     else dispatchEvent({ type: "ADD_EVENT", payload: calendarEvent });
 
-
-    // Shouldn't need to check if user is logged in, because user can only create events if logged in
-
-    setShowEventForm(false);
+      // Shouldn't need to check if user is logged in, because user can only create events if logged in
+      setShowEventForm(false);
     setTitle("");
     setDescription("");
     //setSelectedLabel(labels[0]);
@@ -191,7 +194,7 @@ export default function EventForm() {
         </header>
         <div className="p-3">
           <div className="grid grid-cols-1/5 items-end gap-y-7">
-            <div></div>
+            <div></div> 
             <input
               type="text"
               name="title"
@@ -240,6 +243,16 @@ export default function EventForm() {
                 </span>
               ))}
             </div>
+            <span className="material-icons-outlined text-gray-400">visibility</span>
+            <select
+              value={visibility}
+              onChange={(event) => setVisibility(event.target.value)}
+              className="border-0 text-gray-600 pb-2 w-full border-b-2 border-gray-200 focus:outline-none focus:ring-0 focus:border-blue-500"
+            >
+              {visibilities.map((vis, i) => (
+                <option key={i} value={vis}>{vis}</option>
+              ))}
+            </select>
           </div>
         </div>
         <footer className="flex justify-end border-t p-3 mt-5">
