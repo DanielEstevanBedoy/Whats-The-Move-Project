@@ -15,12 +15,22 @@ function FriendNotifications() {
       onValue(notificationsRef, (snapshot) => {
         const notificationsData = snapshot.val();
         if (notificationsData) {
-          const notificationsList = Object.entries(notificationsData).map(
-            ([id, notification]) => ({
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);  // set the time to 00:00:00
+
+          const notificationsList = Object.entries(notificationsData)
+            .filter(([, notification]) => {
+              // convert the Unix timestamp into a date object
+              const eventDate = new Date(notification.day);
+
+              // only include the notification if the event date is today or in the future
+              return eventDate >= today;
+            })
+            .map(([id, notification]) => ({
               id,
               ...notification,
-            })
-          );
+            }));
+
           setNotifications(notificationsList);
         }
       });
@@ -33,7 +43,7 @@ function FriendNotifications() {
       {notifications.length ? (
         notifications.map((notification) => (
           <p key={notification.id}>
-            You have been invited to the event "{notification.event}" by{" "}
+            You have been invited to the event "{notification.title}" by{" "}
             {notification.from}
           </p>
         ))

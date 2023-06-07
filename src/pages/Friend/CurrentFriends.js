@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import GlobalContext from "../../Context/GlobalContext";
+import {db, auth} from "../../utils/firebase"
 import {
   getDatabase,
   ref,

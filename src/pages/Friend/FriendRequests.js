@@ -14,8 +14,8 @@ import {
 
 function FriendRequests() {
   const [friendRequests, setFriendRequests] = useState([]);
-  const auth = getAuth();
-  const db = getDatabase();
+  //const auth = getAuth();
+  //const db = getDatabase();
   useEffect(() => {
     const friendRequestsRef = ref(
       db,

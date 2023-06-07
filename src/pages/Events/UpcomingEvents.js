@@ -64,10 +64,14 @@ export default function UpcomingEvents() {
            event.userName.toLowerCase().includes(searchTerm.toLowerCase())
          )
          .map((event, index) => {
-           const daysToEvent = dayjs(event.day).diff(dayjs(), "day") + 1;
+           const today = dayjs().startOf("day");
+           const eventDay = dayjs(event.day).startOf("day");
+           const daysToEvent = eventDay.diff(today, "day");
+
+
            let daysIndicator = "";
            if (daysToEvent === 0) daysIndicator = "Today";
-           else if (daysToEvent === 1) daysIndicator = "In 1 day";
+           else if (daysToEvent === 1) daysIndicator = "Tomorrow";
            else if (daysToEvent > 1) daysIndicator = `In ${daysToEvent} days`;
 
 
