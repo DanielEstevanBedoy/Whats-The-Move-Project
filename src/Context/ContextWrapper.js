@@ -197,7 +197,28 @@ export default function ContextWrapper(props) {
   key "savedEvents". 
   */
 
-
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+    setIsLoading(true); // set isLoading to true right before you start fetching data
+    if (user) {
+    // User is signed in, fetch the events
+        initEvents().then((events) => {
+          dispatchEvent({ type: "INIT_EVENTS", payload: events });
+          setIsLoading(false);
+        });
+      } else {
+        // No user is signed in, clear the events
+        dispatchEvent({ type: "CLEAR_EVENTS" });
+        setIsLoading(false);
+      }
+    });
+    return () => {
+      setIsLoading(true); // set isLoading to true when the component unmounts
+    };
+    }, []);
+  
+  
+  
   // this useEffect will handle friends events only
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -251,6 +272,97 @@ export default function ContextWrapper(props) {
       });
     }
   }, [savedEvents, initialized]);
+
+    useEffect(() => {
+        if (auth.currentUser) {
+          setIsLoading(true); // Set loading to true before starting to fetch
+          const userFriendsRef = ref(db, `Users/${auth.currentUser.uid}/friends`);
+          const friendsListListener = onValue(userFriendsRef, (snapshot) => {
+            const friendsList = snapshot.val();
+            if (friendsList) {
+              const friendsEventsFetches = Object.keys(friendsList).map(
+                (friendId) => {
+                  const friendEventsRef = ref(db, `Users/${friendId}/Events`);
+                  return get(friendEventsRef).then((snapshot) => {
+                    const friendEvents = snapshot.val() || {};
+                    return Object.keys(friendEvents).map((key) => {
+                      return {
+                      ...friendEvents[key],
+                      id: key, // Ensure the id is included in each event
+                    };
+                  });
+                });
+              }
+            );
+            Promise.all(friendsEventsFetches).then((friendsEventsArrays) => {
+              const combinedFriendsEvents = [].concat(...friendsEventsArrays);
+              setFriendsEvents(combinedFriendsEvents);
+              setIsLoading(false); // Set loading to false after the data is fetched
+            });
+          } else {
+            setFriendsEvents([]);
+            setIsLoading(false); // And here as well
+          }
+        });
+  
+        // Cleanup function to remove listener
+        return () => {
+          off(userFriendsRef, friendsListListener);
+        };
+      } else {
+        setFriendsEvents([]);
+        setIsLoading(false); // And here
+      }
+    }, [auth.currentUser]);
+
+  useEffect(() => {
+      if (!showEventForm) {
+        setSelectedEvent(null);
+      }
+    }, [showEventForm]);
+  
+    useEffect(() => {
+      if (auth.currentUser) {
+        setIsLoading(true); // Set loading to true before starting to fetch
+        const userFriendsRef = ref(db, `Users/${auth.currentUser.uid}/friends`);
+        const friendsListListener = onValue(userFriendsRef, (snapshot) => {
+          const friendsList = snapshot.val();
+          if (friendsList) {
+            const friendsEventsFetches = Object.keys(friendsList).map(
+              (friendId) => {
+                const friendEventsRef = ref(db, `Users/${friendId}/Events`);
+                return get(friendEventsRef).then((snapshot) => {
+                  const friendEvents = snapshot.val() || {};
+                  return Object.keys(friendEvents).map((key) => {
+                    return {
+                      ...friendEvents[key],
+                      id: key, // Ensure the id is included in each event
+                    };
+                  });
+                });
+              }
+            );
+            Promise.all(friendsEventsFetches).then((friendsEventsArrays) => {
+              const combinedFriendsEvents = [].concat(...friendsEventsArrays);
+              setFriendsEvents(combinedFriendsEvents);
+              setIsLoading(false); // Set loading to false after the data is fetched
+            });
+          } else {
+            setFriendsEvents([]);
+            setIsLoading(false); // And here as well
+          }
+        });
+  
+        // Cleanup function to remove listener
+        return () => {
+          off(userFriendsRef, friendsListListener);
+        };
+      } else {
+        setFriendsEvents([]);
+        setIsLoading(false); // And here
+      }
+    }, [auth.currentUser]);
+
 
 
   useEffect(() => {
