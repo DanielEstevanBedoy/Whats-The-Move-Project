@@ -2,8 +2,8 @@ import CalendarPage from "../pages/CalendarPage/CalendarPage";
 import Friends from "../pages/Friend/FriendsPage";
 import PastEvents from "../pages/Events/PastEvents";
 import FutureEvents from "../pages/Events/UpcomingEvents";
-import Events from "../pages/Events/Events";
-import FriendNotifications from "../pages/Friend/FriendNotifications";
+// import Events from "../pages/Events/Events";
+// import FriendNotifications from "../pages/Friend/FriendNotifications";
 import { auth } from "../utils/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import {
@@ -18,8 +18,10 @@ import Login from "../pages/Login/login";
 import { useState } from "react";
 import Notification from "../pages/Events/notification";
 
+
 function AuthWrapper({ children }) {
   const [user, loading] = useAuthState(auth);
+
 
   const navigate = useNavigate();
   if (loading) {
@@ -32,15 +34,18 @@ function AuthWrapper({ children }) {
   return children;
 }
 
+
 export default function Dashboard() {
   const [user, loading] = useAuthState(auth);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [eventsDropdownOpen, setEventsDropdownOpen] = useState(false);
 
+
   const handleDropdownClick = () => setDropdownOpen(!dropdownOpen);
   const handleEventsDropdownClick = () =>
     setEventsDropdownOpen(!eventsDropdownOpen);
   const closeEventsDropdown = () => setEventsDropdownOpen(false);
+
 
   return (
     <BrowserRouter>
