@@ -215,7 +215,7 @@ export default function ContextWrapper(props) {
     return () => {
       setIsLoading(true); // set isLoading to true when the component unmounts
     };
-    }, []);
+  }, []);
   
   
   
@@ -238,7 +238,7 @@ export default function ContextWrapper(props) {
     return () => {
       setIsLoading(true); // set isLoading to true when the component unmounts
     };
-  }, []);
+  }, [showFriendsEvents, initialized, auth.currentUser]);
 
   // this useEffect will handle close friend events only
   useEffect(() => {
@@ -259,7 +259,7 @@ export default function ContextWrapper(props) {
     return () => {
       setIsLoading(true); // set isLoading to true when the component unmounts
     };
-  }, []);
+  }, [showCloseFriendEvents, initialized, auth.currentUser]);
 
 
 

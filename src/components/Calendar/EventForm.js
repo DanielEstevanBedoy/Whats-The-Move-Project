@@ -57,16 +57,16 @@ export default function EventForm() {
   function handleSubmit(event) {
     event.preventDefault(); // disable page reload
     const calendarEvent = {
-      title,
-      description,
-      label: selectedLabel,
-      day: daySelected.valueOf(),
-      id: selectedEvent ? selectedEvent.id : String(Date.now()),
-	    image: [],
-	    userID: auth.currentUser.uid,
-      userEmail: auth.currentUser.email,
-      userName: auth.currentUser.displayName,
-      visibility,
+	title,
+	description,
+	label: selectedLabel,
+	day: daySelected.valueOf(),
+	id: selectedEvent ? selectedEvent.id : String(Date.now()),
+	image: [],
+	userID: auth.currentUser.uid,
+	userEmail: auth.currentUser.email,
+	userName: auth.currentUser.displayName,
+	visibility: visibility,
     };
 
 
