@@ -123,6 +123,18 @@ function CurrentFriends() {
       updates[`Users/${currentUserID}/friends/${friendId}`] = null;
       updates[`Users/${friendId}/friends/${currentUserID}`] = null;
       updates[`Users/${currentUserID}/closeFriends/${friendId}`] = null;
+      
+      // Removing myself from their close friend list if I am in it
+      const friendCloseFriendsRef = ref(db, `Users/${friendId}/closeFriends`);
+      onValue(friendCloseFriendsRef, (snapshot) => {
+        const closeFriendsData = snapshot.val();
+        if (closeFriendsData) {
+          if (Object.keys(closeFriendsData).includes(currentUserID)) {
+            updates[`Users/${friendId}/closeFriends/${currentUserID}`] = null;
+          }
+        }
+      });  
+
       await update(ref(db), updates);
     }
   };
