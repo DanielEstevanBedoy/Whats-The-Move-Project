@@ -3,7 +3,6 @@ import GlobalContext from "../../Context/GlobalContext";
 import dayjs from "dayjs";
 import { get, ref } from "firebase/database";
 import { db } from "../../utils/firebase";
-import PastEvents from "./PastEvents.js";
 import { Route, Routes, Link } from "react-router-dom";
 
 

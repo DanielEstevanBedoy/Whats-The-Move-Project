@@ -62,19 +62,19 @@ export default function EventForm() {
       label: selectedLabel,
       day: daySelected.valueOf(),
       id: selectedEvent ? selectedEvent.id : String(Date.now()),
+	    image: [],
+	    userID: auth.currentUser.uid,
       userEmail: auth.currentUser.email,
       userName: auth.currentUser.displayName,
-      visibility
+      visibility,
     };
 
 
     if (selectedEvent)
       dispatchEvent({ type: "UPDATE_EVENT", payload: calendarEvent });
     else dispatchEvent({ type: "ADD_EVENT", payload: calendarEvent });
-
-    // Shouldn't need to check if user is logged in, because user can only create events if logged in
-
-    setShowEventForm(false);
+      // Shouldn't need to check if user is logged in, because user can only create events if logged in
+      setShowEventForm(false);
   }
 
   return (
