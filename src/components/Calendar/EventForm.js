@@ -1,6 +1,8 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef, useEffect} from "react";
 import GlobalContext from "../../Context/GlobalContext";
 import { auth, db } from '../../utils/firebase';
+//import {useRef} from "react";
+//import {useEffect} from "react";
 // import { ref, set, push, onValue } from 'firebase/database';
 
 const labels = ["gray", "blue", "indigo", "green", "red", "purple"];
@@ -14,7 +16,10 @@ const colorMap500 = {
   purple: "bg-purple-500",
 };
 
+
+
 export default function EventForm() {
+  const inputRef = useRef(null);
   const { setShowEventForm, daySelected, dispatchEvent, selectedEvent } =
     useContext(GlobalContext);
 
@@ -25,6 +30,41 @@ export default function EventForm() {
   const dayOfTheWeek = daySelected.format("d");
 
   let formPositionClasses = "";
+
+  const formRef=useRef(null);
+
+  const handleKeyDown = (event) => {
+    if (event.key ==="Enter") {
+      event.preventDefault();
+      const submitButton = formRef.current.querySelector('[type="submit"]');
+      //handleSubmit(event);
+      submitButton.click();
+    }
+  };
+  
+
+  /*useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        handleSubmit(event);
+
+        
+      }
+    };
+
+   const inputElement = formRef.current;
+   if (inputElement) {
+    inputElement.addEventListener("keydown", handleKeyDown);
+   }
+
+    return () => {
+      if (inputElement) {
+        inputElement.removeEventListener("keydown", handleKeyDown);
+      }
+    };
+  }, []); */
+
 
   switch (dayOfTheWeek) {
     case "0":
@@ -62,25 +102,67 @@ export default function EventForm() {
       id: selectedEvent ? selectedEvent.id : String(Date.now()),
       userEmail: auth.currentUser.email,
       userName: auth.currentUser.displayName, 
+
     };
 
+    
 
     if (selectedEvent)
       dispatchEvent({ type: "UPDATE_EVENT", payload: calendarEvent });
     else dispatchEvent({ type: "ADD_EVENT", payload: calendarEvent });
 
+
     // Shouldn't need to check if user is logged in, because user can only create events if logged in
 
     setShowEventForm(false);
+    setTitle("");
+    setDescription("");
+    //setSelectedLabel(labels[0]);
+   // event.target.reset();
   }
+
+  useEffect(() => {
+
+
+    const formElement = formRef.current;
+    if(formElement) {
+      formElement.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      if (formElement) {
+        formElement.removeEventListener("keydown", handleKeyDown);
+      }
+    };
+  }, []);
+    /*const handleKeyDown = (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        handleSubmit(event);
+
+        
+      }
+    };
+
+   const inputElement = formRef.current;
+   if (inputElement) {
+    inputElement.addEventListener("keydown", handleKeyDown);
+   }
+
+    return () => {
+      if (inputElement) {
+        inputElement.removeEventListener("keydown", handleKeyDown);
+      }
+    };
+  }, []);*/
 
   return (
     <div
       className={
         "h-screen w-full fixed top-0 flex items-center " + formPositionClasses
-      }
-    >
-      <form className="bg-white rounded-lg shadow-2x w-1/4">
+      }>
+      
+      <form ref={formRef} className="bg-white rounded-lg shadow-2x w-1/4" onSubmit={handleSubmit}>
         <header className="bg-gray-100 px-4 py-2 flex justify-between items-center">
           <span className="material-icons-outlined text-gray-400">
             drag_handle
@@ -135,6 +217,7 @@ export default function EventForm() {
               required
               className="pt-3 border-0 text-gray-600 pb-2 w-full border-b-2 border-gray-200 focus:outline-none focus:ring-0 focus:border-blue-500"
               onChange={(event) => setDescription(event.target.value)}
+              ref={inputRef}
             />
             <span className="material-icons-outlined text-gray-400">
               group
@@ -161,9 +244,11 @@ export default function EventForm() {
         </div>
         <footer className="flex justify-end border-t p-3 mt-5">
           <button
+          //ref={buttonRef}
             type="submit"
             className="bg-blue-500 hover:bg-blue-600 px-6 py-2 rounded text-white"
-            onClick={handleSubmit}
+            //onClick={handleSubmit}
+            
           >
             Save
           </button>
