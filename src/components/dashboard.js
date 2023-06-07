@@ -128,7 +128,7 @@ export default function Dashboard() {
           <Route path="/CalendarPage" element={<CalendarPage />} />
           <Route path="/Friends" element={<Friends />} />
           <Route path="/PastEvents/*" element={<PastEvents/>} />
-	  <Route path="/FutureEvents/*" element={<FutureEvents/>} />
+	        <Route path="/FutureEvents/*" element={<FutureEvents/>} />
           <Route path="/login" element={<Login/>} />
         </Routes>
       </div>
