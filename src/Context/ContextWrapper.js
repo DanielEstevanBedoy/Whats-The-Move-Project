@@ -14,7 +14,6 @@ import { auth, db } from "../utils/firebase";
 import GlobalContext from "./GlobalContext";
 import dayjs from "dayjs";
 
-
 /* Reducer function takes current state and an action, and returns the new state */
 function savedEventsReducer(state, { type, payload }) {
  switch (type) {
@@ -25,7 +24,6 @@ function savedEventsReducer(state, { type, payload }) {
      }
      return [...state, payload];
 
-
    case "REMOVE_EVENT":
      if (auth.currentUser) {
        const userEventsRef = ref(db, `Users/${auth.currentUser.uid}/Events`);
@@ -33,7 +31,6 @@ function savedEventsReducer(state, { type, payload }) {
        remove(eventToRemoveRef);
      }
      return state.filter((event) => event.id !== payload.id);
-
 
    case "UPDATE_EVENT":
      if (auth.currentUser) {
@@ -43,14 +40,11 @@ function savedEventsReducer(state, { type, payload }) {
      }
      return state.map((event) => (event.id === payload.id ? payload : event));
 
-
    case "INIT_EVENTS":
      return payload;
 
-
    case "CLEAR_EVENTS":
      return [];
-
 
    default:
      throw new Error();
@@ -261,8 +255,7 @@ export default function ContextWrapper(props) {
     };
   }, []);
 
-
-
+  // Fetch User events
   useEffect(() => {
     if (initialized && auth.currentUser) {
       const userEventsRef = ref(db, `Users/${auth.currentUser.uid}/Events`);
@@ -279,6 +272,7 @@ export default function ContextWrapper(props) {
       }
     }, [showEventForm]);
   
+  // Fetch friends
     useEffect(() => {
       if (auth.currentUser) {
         setIsLoading(true); // Set loading to true before starting to fetch
@@ -322,10 +316,10 @@ export default function ContextWrapper(props) {
     }, [auth.currentUser]);
 
 
-
+  // Fetching close friends
   useEffect(() => {
     if (auth.currentUser) {
-      setIsLoading(true); // Set loading to true before starting to fetch
+      setIsLoading(true);
       const userFriendsRef = ref(db, `Users/${auth.currentUser.uid}/friends`);
       const friendsListListener = onValue(userFriendsRef, async (snapshot) => {
         const friendsList = snapshot.val();
@@ -337,19 +331,21 @@ export default function ContextWrapper(props) {
               const friendCloseFriends = friendCloseFriendsSnapshot.val() || {};
   
               if (friendCloseFriends.hasOwnProperty(auth.currentUser.uid)) {
-                // If the current user is a close friend, fetch the friend's close friend events
-                const closeFriendEventsRef = ref(db, `Users/${friendId}/CloseFriendsEvents`);
-                return get(closeFriendEventsRef).then((snapshot) => {
-                  const closeFriendEvents = snapshot.val() || {};
-                  return Object.keys(closeFriendEvents).map((key) => {
-                    return {
-                      ...closeFriendEvents[key],
-                      id: key, // Ensure the id is included in each event
-                    };
-                  });
+                const eventsRef = ref(db, `Users/${friendId}/Events`);
+                return get(eventsRef).then((snapshot) => {
+                  const events = snapshot.val() || {};
+                  const closeFriendEvents = Object.keys(events).reduce((filtered, key) => {
+                    if (events[key].visibility === "Close Friends") {
+                      filtered.push({
+                        ...events[key],
+                        id: key,
+                      });
+                    }
+                    return filtered;
+                  }, []);
+                  return closeFriendEvents;
                 });
               } else {
-                // If the current user is not a close friend, don't fetch any events
                 return [];
               }
             }
@@ -358,23 +354,23 @@ export default function ContextWrapper(props) {
           Promise.all(friendsEventsFetches).then((friendsEventsArrays) => {
             const combinedFriendsEvents = [].concat(...friendsEventsArrays);
             setCloseFriendEvents(combinedFriendsEvents);
-            setIsLoading(false); // Set loading to false after the data is fetched
+            setIsLoading(false);
           });
         } else {
           setCloseFriendEvents([]);
-          setIsLoading(false); // And here as well
+          setIsLoading(false);
         }
       });
   
-      // Cleanup function to remove listener
       return () => {
         off(userFriendsRef, friendsListListener);
       };
     } else {
       setCloseFriendEvents([]);
-      setIsLoading(false); // And here
+      setIsLoading(false);
     }
   }, [auth.currentUser]);
+  
 
     // Cool Button go BRRRRRR in CurrentFriends Component
     const [isCloseFriend, setIsCloseFriend] = useState([]);
