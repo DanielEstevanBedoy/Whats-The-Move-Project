@@ -38,6 +38,8 @@ export default function Day({ day, rowIndex }) {
     showFriendsEvents,
     closeFriendEvents,
     showCloseFriendEvents,
+    canEdit,
+    setCanEdit,
   } = useContext(GlobalContext);
 
   useEffect(() => {
@@ -81,20 +83,38 @@ export default function Day({ day, rowIndex }) {
         className="flex-1 cursor-pointer"
         onClick={() => {
           setDaySelected(day);
+          setCanEdit(true);
           setShowEventForm(true);
         }}
       >
         {todaysEvents.map((event, index) => (
           <div className="flex">
             {event.tag === "friend" && (
-              <div className={"material-icons-outlined -mr-1 " + iconColorMap700[event.label]}>group</div>
+              <div
+                className={
+                  "material-icons-outlined -mr-1 " +
+                  iconColorMap700[event.label]
+                }
+              >
+                group
+              </div>
             )}
             {event.tag === "closeFriend" && (
-              <div className={"material-icons-outlined -mr-1 " + iconColorMap700[event.label]}>auto_awesome</div>
+              <div
+                className={
+                  "material-icons-outlined -mr-1 " +
+                  iconColorMap700[event.label]
+                }
+              >
+                auto_awesome
+              </div>
             )}
             <div
               key={index}
-              onClick={() => setSelectedEvent(event)}
+              onClick={() => {
+                setSelectedEvent(event);
+                setCanEdit(false);
+              }}
               className={
                 colorMap200[event.label] +
                 " p-1 ml-2 text-gray-600 text-sm rounded mb-1 truncate flex-grow"

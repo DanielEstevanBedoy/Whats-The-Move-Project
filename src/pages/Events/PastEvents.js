@@ -152,14 +152,14 @@ export default function PastEvents() {
 			 className="flex flex-col bg-white shadow-md my-0 p-4 rounded-md w-full hover:bg-blue-100 transition-colors border border-gray-300 mb-3"
 		     >
 			 <h3 className="text-lg text-blue-500 font-semibold">
-			     {dayjs(event.day).format("ddd, MMM D")}
+			     {dayjs(event.day).format("MM-DD-YYYY")}
 			 </h3>
 			 <h2 className="text-2xl text-blue-700 font-bold truncate">
 			     {event.title}
 			 </h2>
 			 <p className="text-gray-700 truncate">{event.description}</p>
 			 <p className="text-sm text-blue-700 mt-2">
-			     Hosted by: {event.userName}
+			     Organized by: {event.userName}
 			 </p>
 			{event.image &&
 			 event.image.map((image, i) => (
