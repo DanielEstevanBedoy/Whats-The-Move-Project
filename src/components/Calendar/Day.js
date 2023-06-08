@@ -38,8 +38,6 @@ export default function Day({ day, rowIndex }) {
     showFriendsEvents,
     closeFriendEvents,
     showCloseFriendEvents,
-    canEdit,
-    setCanEdit,
   } = useContext(GlobalContext);
 
   useEffect(() => {
@@ -83,7 +81,6 @@ export default function Day({ day, rowIndex }) {
         className="flex-1 cursor-pointer"
         onClick={() => {
           setDaySelected(day);
-          setCanEdit(true);
           setShowEventForm(true);
         }}
       >
@@ -113,7 +110,6 @@ export default function Day({ day, rowIndex }) {
               key={index}
               onClick={() => {
                 setSelectedEvent(event);
-                setCanEdit(false);
               }}
               className={
                 colorMap200[event.label] +

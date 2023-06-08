@@ -27,7 +27,7 @@ const colorMap500 = {
 };
 
 export default function EventForm() {
-  const { setShowEventForm, daySelected, dispatchEvent, selectedEvent, canEdit, setCanEdit } =
+  const { setShowEventForm, daySelected, dispatchEvent, selectedEvent } =
     useContext(GlobalContext);
   const [visibility, setVisibility] = useState(
     selectedEvent ? selectedEvent.visibility : visibilities[0]
@@ -45,7 +45,11 @@ export default function EventForm() {
 
   const dayOfTheWeek = daySelected.format("d");
 
-  const isOwnEvent = selectedEvent && selectedEvent.userID === auth.currentUser.uid;
+  let isOwnEvent = true;
+
+  if (selectedEvent) {
+    isOwnEvent = selectedEvent.userID === auth.currentUser.uid;
+  }
 
   let formPositionClasses = "";
 
@@ -109,28 +113,19 @@ export default function EventForm() {
             drag_handle
           </span>
           <div>
-            {selectedEvent && isOwnEvent && !canEdit && (
-              <>
-              {console.log("asdfasdf")};
-                <span
-                  onClick={() => setCanEdit(true)}
-                  className="material-icons-outlined text-gray-400 cursor-pointer"
-                >
-                  edit
-                </span>
-                <span
-                  onClick={() => {
-                    dispatchEvent({
-                      type: "REMOVE_EVENT",
-                      payload: selectedEvent,
-                    });
-                    setShowEventForm(false);
-                  }}
-                  className="material-icons-outlined text-gray-400 cursor-pointer"
-                >
-                  delete
-                </span>
-              </>
+            {selectedEvent && isOwnEvent && (
+              <span
+                onClick={() => {
+                  dispatchEvent({
+                    type: "REMOVE_EVENT",
+                    payload: selectedEvent,
+                  });
+                  setShowEventForm(false);
+                }}
+                className="material-icons-outlined text-gray-400 cursor-pointer"
+              >
+                delete
+              </span>
             )}
             <button onClick={() => setShowEventForm(false)}>
               <span className="material-icons-outlined text-gray-400 cursor-pointer">
@@ -142,7 +137,7 @@ export default function EventForm() {
         <div className="p-3">
           <div className="grid grid-cols-1/5 items-end gap-y-7">
             <div></div>
-            {canEdit ? (
+            {isOwnEvent ? (
               <input
                 type="text"
                 name="title"
@@ -177,7 +172,7 @@ export default function EventForm() {
             <span className="material-icons-outlined text-gray-400">
               segment
             </span>
-            {canEdit ? (
+            {isOwnEvent ? (
               <input
                 type="text"
                 name="description"
@@ -188,23 +183,23 @@ export default function EventForm() {
                 onChange={(event) => setDescription(event.target.value)}
               />
             ) : (
-              <textarea
-                name="description"
-                placeholder="Add description"
-                value={description}
-                required
-                disabled
-                className="pt-3 border-0 text-gray-600 pb-2 w-full focus:outline-none focus:ring-0 focus:border-blue-500 overflow-y-auto"
-                style={{
-                  overflowWrap: "break-word",
-                  height: "auto",
-                  resize: "none",
-                  borderBottom: "none",
-                }}
-                maxLength={1000}
-              />
-            )}
-            {canEdit ? (
+                <textarea
+                  name="description"
+                  placeholder="Add description"
+                  value={description || "No description"}
+                  required
+                  disabled
+                  className="pt-3 border-0 text-gray-600 pb-2 w-full focus:outline-none focus:ring-0 focus:border-blue-500 overflow-y-auto"
+                  style={{
+                    overflowWrap: "break-word",
+                    height: "auto",
+                    resize: "none",
+                    borderBottom: "none",
+                  }}
+                  maxLength={1000}
+                />
+              )}
+            {isOwnEvent ? (
               <>
                 <span className="material-icons-outlined text-gray-400">
                   label
@@ -249,7 +244,7 @@ export default function EventForm() {
                 </span>
                 <p
                   className="pt-3 border-0 text-gray-600 pb-2 w-full"
-                  style={!canEdit ? { borderBottom: "none" } : {}}
+                  style={!isOwnEvent ? { borderBottom: "none" } : {}}
                 >
                   {selectedEvent.userName}, {visibility}
                 </p>
@@ -257,15 +252,19 @@ export default function EventForm() {
             )}
           </div>
         </div>
-        <footer className="flex justify-end border-t p-3 mt-5">
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-600 px-6 py-2 rounded text-white"
-            onClick={handleSubmit}
-          >
-            Save
-          </button>
-        </footer>
+        {isOwnEvent ? (
+          <footer className="flex justify-end border-t p-3 mt-5">
+            <button
+              type="submit"
+              className="bg-blue-500 hover:bg-blue-600 px-6 py-2 rounded text-white"
+              onClick={handleSubmit}
+            >
+              Save
+            </button>
+          </footer>
+        ) : (
+          ""
+        )}
       </form>
     </div>
   );

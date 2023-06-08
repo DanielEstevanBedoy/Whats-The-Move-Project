@@ -188,7 +188,6 @@ export default function ContextWrapper(props) {
   const [showEventForm, setShowEventForm] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [canEdit, setCanEdit] = useState(false);
 
   const [savedEvents, dispatchEvent] = useReducer(savedEventsReducer, []);
   const [friendsEvents, setFriendsEvents] = useState([]);
@@ -279,7 +278,6 @@ export default function ContextWrapper(props) {
   useEffect(() => {
       if (!showEventForm) {
         setSelectedEvent(null);
-        setCanEdit(false);
       }
     }, [showEventForm]);
   
@@ -408,8 +406,6 @@ export default function ContextWrapper(props) {
         setShowCloseFriendEvents,
         isCloseFriend, 
         setIsCloseFriend,
-        canEdit,
-        setCanEdit
       }}
     >
       {props.children}
