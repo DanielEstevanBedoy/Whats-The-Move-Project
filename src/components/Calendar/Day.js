@@ -3,12 +3,14 @@ import dayjs from "dayjs";
 import GlobalContext from "../../Context/GlobalContext";
 
 const colorMap200 = {
-  gray: "bg-gray-200",
+  rose: "bg-rose-200",
+  fuchsia: "bg-fuchsia-200",
+  violet: "bg-violet-200",
   blue: "bg-blue-200",
-  indigo: "bg-indigo-200",
-  green: "bg-green-200",
-  red: "bg-red-200",
-  purple: "bg-purple-200",
+  cyan: "bg-cyan-200",
+  emerald: "bg-emerald-200",
+  lime: "bg-lime-200",
+  gray: "bg-gray-200",
 };
 
 // Represent every individual item in our grid

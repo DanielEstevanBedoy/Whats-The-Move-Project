@@ -3,16 +3,18 @@ import GlobalContext from "../../Context/GlobalContext";
 import { auth, db } from '../../utils/firebase';
 // import { ref, set, push, onValue } from 'firebase/database';
 
-const labels = ["gray", "blue", "indigo", "green", "red", "purple"];
+const labels = ["blue", "rose", "fuchsia", "violet","cyan", "emerald", "lime", "gray"];
 const visibilities = ["Private", "Public", "Close Friends"];
 
 const colorMap500 = {
-  gray: "bg-gray-500",
   blue: "bg-blue-500",
-  indigo: "bg-indigo-500",
-  green: "bg-green-500",
-  red: "bg-red-500",
-  purple: "bg-purple-500",
+  rose: "bg-rose-500",
+  fuchsia: "bg-fuchsia-500",
+  violet: "bg-violet-500",
+  cyan: "bg-cyan-500",
+  emerald: "bg-emerald-500",
+  lime: "bg-lime-500",
+  gray: "bg-gray-500",
 };
 
 export default function EventForm() {

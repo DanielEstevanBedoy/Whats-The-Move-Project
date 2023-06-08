@@ -26,13 +26,14 @@ export default function UpcomingEvents() {
 
 
  useEffect(() => {
-     const allEvents = savedEvents.concat(friendsEvents).concat(closeFriendEvents);
+     const allEvents = savedEvents.concat(friendsEvents).concat(closeFriendEvents)
+
    const events = allEvents.filter(
      (event) => dayjs(event.day).format("YYYYMMDD") >= day.format("YYYYMMDD")
    );
    events.sort(compareLT);
    setUpcomingEvents(events);
- }, [day.format("YYYYMMDD"), savedEvents, friendsEvents]);
+ }, [day.format("YYYYMMDD"), savedEvents, friendsEvents, closeFriendEvents]);
 
 
  if (isLoading) {

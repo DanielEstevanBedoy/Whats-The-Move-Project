@@ -88,7 +88,7 @@ export default function Dashboard() {
                     onClick={closeEventsDropdown}
                     className="block text-left px-4 py-2 text-gray-800 hover:bg-blue-50 transition duration-150"
                   >
-                    Future Events
+                    Upcoming Events
                   </Link>
                 </div>
               )}
