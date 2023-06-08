@@ -142,7 +142,7 @@ export default function EventForm() {
               onChange={(event) => setDescription(event.target.value)}
             />
             <span className="material-icons-outlined text-gray-400">
-              group
+              label
             </span>
             <div className="flex gap-x-2">
               {labels.map((lbl, i) => (
