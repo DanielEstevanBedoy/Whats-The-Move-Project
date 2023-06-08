@@ -5,7 +5,7 @@ import { auth, db } from "../../utils/firebase";
 import { ref, set, get, onValue, update } from "firebase/database";
 
 export default function PastEvents() {
-    const { friendsEvents } = useContext(GlobalContext);
+    const { friendsEvents, closeFriendEvents } = useContext(GlobalContext);
     const [sortedEvents, setSortedEvents] = useState([]);
     const [savedEvents, setSavedEvents] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -25,7 +25,8 @@ export default function PastEvents() {
 			      ...event,
 			      id : index,
 			  }))
-			  .concat(friendsEvents);
+			  .concat(friendsEvents)
+			  .concat(closeFriendEvents);
 		    return allEvents;
 		} catch (error) {
 		    console.log("Error fetching user events:", error);
@@ -37,7 +38,7 @@ export default function PastEvents() {
 	    }
 	};
 	fetchData();
-    }, [day.format("YYYYMMDD"), friendsEvents,  auth.currentUser]);
+    }, [day.format("YYYYMMDD"), friendsEvents, closeFriendEvents, auth.currentUser]);
 
     function compareGT( a, b )
     {
@@ -64,7 +65,15 @@ export default function PastEvents() {
     const [file, setFile] = useState(null);
     
     function handleChange(e) {
-        setFile(e.target.files[0]);
+        const selectedFile = e.target.files[0];
+	const allowedTypes = ["image/jpeg", "image/png"]; // Specify the allowed image file types
+
+	if (selectedFile && allowedTypes.includes(selectedFile.type)) {
+	    setFile(selectedFile);
+	} else {
+	    setFile(null);
+	    alert("Please select a valid image file (JPEG or PNG).");
+	}
     }
 
     const handleImageUpload = async (userID, eventID) => {
@@ -86,6 +95,8 @@ export default function PastEvents() {
 		    console.log("Error adding attribute: ", error);
 		}
 	    };
+	} else {
+	    alert("Please upload an image file");
 	}
     };
 
@@ -138,17 +149,17 @@ export default function PastEvents() {
 		 .map((event, index) => (
 		     <div
 			 key={index}
-			 className="flex flex-col bg-white shadow-md my-0 p-4 rounded-md w-full hover:bg-blue-100 transition-colors border border-gray-300"
+			 className="flex flex-col bg-white shadow-md my-0 p-4 rounded-md w-full hover:bg-blue-100 transition-colors border border-gray-300 mb-3"
 		     >
 			 <h3 className="text-lg text-blue-500 font-semibold">
-			     {dayjs(event.day).format("ddd, MMM D")}
+			     {dayjs(event.day).format("MM-DD-YYYY")}
 			 </h3>
 			 <h2 className="text-2xl text-blue-700 font-bold truncate">
 			     {event.title}
 			 </h2>
 			 <p className="text-gray-700 truncate">{event.description}</p>
 			 <p className="text-sm text-blue-700 mt-2">
-			     Hosted by: {event.userName}
+			     Organized by: {event.userName}
 			 </p>
 			{event.image &&
 			 event.image.map((image, i) => (

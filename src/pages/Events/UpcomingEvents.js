@@ -7,7 +7,7 @@ import { Route, Routes, Link } from "react-router-dom";
 
 
 export default function UpcomingEvents() {
- const { isLoading, savedEvents, friendsEvents } = useContext(GlobalContext);
+    const { isLoading, savedEvents, friendsEvents, closeFriendEvents } = useContext(GlobalContext);
  const [upcomingEvents, setUpcomingEvents] = useState([]);
  const [searchTerm, setSearchTerm] = useState("");
  const day = dayjs();
@@ -26,13 +26,14 @@ export default function UpcomingEvents() {
 
 
  useEffect(() => {
-   const allEvents = savedEvents.concat(friendsEvents);
+     const allEvents = savedEvents.concat(friendsEvents).concat(closeFriendEvents)
+
    const events = allEvents.filter(
      (event) => dayjs(event.day).format("YYYYMMDD") >= day.format("YYYYMMDD")
    );
    events.sort(compareLT);
    setUpcomingEvents(events);
- }, [day.format("YYYYMMDD"), savedEvents, friendsEvents]);
+ }, [day.format("YYYYMMDD"), savedEvents, friendsEvents, closeFriendEvents]);
 
 
  if (isLoading) {
@@ -41,7 +42,7 @@ export default function UpcomingEvents() {
 
 
  return (
-   <div className="flex justify-center h-screen bg-white">
+   <div className="flex justify-center h-screen bg-white mb-4">
      <div className="flex flex-col items-center h-full w-1/2 overflow-y-scroll pr-0">
        <h1 className="text-4xl text-blue-500 my-8">Upcoming Events</h1>
        <div className="relative rounded-md shadow-sm mb-6">
@@ -77,7 +78,7 @@ export default function UpcomingEvents() {
            return (
              <div
                key={index}
-               className="flex flex-col bg-white shadow-md my-0 p-4 rounded-md w-full hover:bg-blue-100 transition-colors border border-gray-300"
+               className="flex flex-col bg-white shadow-md my-0 p-4 rounded-md w-full hover:bg-blue-100 transition-colors border border-gray-300 mb-3"
              >
                <h3 className="text-lg text-blue-500 font-semibold">
                  {dayjs(event.day).format("ddd, MMM D")}

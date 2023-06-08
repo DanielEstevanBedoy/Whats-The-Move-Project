@@ -3,12 +3,25 @@ import dayjs from "dayjs";
 import GlobalContext from "../../Context/GlobalContext";
 
 const colorMap200 = {
-  gray: "bg-gray-200",
+  rose: "bg-rose-200",
+  fuchsia: "bg-fuchsia-200",
+  violet: "bg-violet-200",
   blue: "bg-blue-200",
-  indigo: "bg-indigo-200",
-  green: "bg-green-200",
-  red: "bg-red-200",
-  purple: "bg-purple-200",
+  cyan: "bg-cyan-200",
+  emerald: "bg-emerald-200",
+  lime: "bg-lime-200",
+  gray: "bg-gray-200",
+};
+
+const iconColorMap700 = {
+  rose: "text-rose-700",
+  fuchsia: "text-fuchsia-700",
+  violet: "text-violet-700",
+  blue: "text-blue-700",
+  cyan: "text-cyan-700",
+  emerald: "text-emerald-700",
+  lime: "text-lime-700",
+  gray: "text-gray-700",
 };
 
 // Represent every individual item in our grid
@@ -16,24 +29,39 @@ export default function Day({ day, rowIndex }) {
   const isToday = dayjs().isSame(dayjs(day), "day");
 
   const [todaysEvents, setTodaysEvents] = useState([]);
-  const { setDaySelected, setShowEventForm, savedEvents, friendsEvents, setSelectedEvent, showFriendsEvents, closeFriendEvents, showCloseFriendEvents } =
-    useContext(GlobalContext);
+  const {
+    setDaySelected,
+    setShowEventForm,
+    savedEvents,
+    friendsEvents,
+    setSelectedEvent,
+    showFriendsEvents,
+    closeFriendEvents,
+    showCloseFriendEvents,
+  } = useContext(GlobalContext);
 
   useEffect(() => {
     // Combining savedEvents and friendsEvents
     // const allEvents = showFriendsEvents ? [...savedEvents, ...friendsEvents] : [...savedEvents];
     let myEvents = savedEvents; // start with user's own events
-    if(showFriendsEvents){
+    if (showFriendsEvents) {
       myEvents = [...myEvents, ...friendsEvents];
     }
-    if(showCloseFriendEvents){
-      myEvents = [...myEvents, ...closeFriendEvents]; 
+    if (showCloseFriendEvents) {
+      myEvents = [...myEvents, ...closeFriendEvents];
     }
     const events = myEvents.filter(
       (event) => dayjs(event.day).format("DD-MM-YY") === day.format("DD-MM-YY")
     );
     setTodaysEvents(events);
-  }, [savedEvents, friendsEvents, closeFriendEvents, day, showFriendsEvents, showCloseFriendEvents]);
+  }, [
+    savedEvents,
+    friendsEvents,
+    closeFriendEvents,
+    day,
+    showFriendsEvents,
+    showCloseFriendEvents,
+  ]);
 
   return (
     <div className="border border-gray-200 flex flex-col">
@@ -57,15 +85,39 @@ export default function Day({ day, rowIndex }) {
         }}
       >
         {todaysEvents.map((event, index) => (
-          <div
-            key={index}
-            onClick={() => setSelectedEvent(event)}
-            className={
-              colorMap200[event.label] +
-              " p-1 mr-3 text-gray-600 text-sm rounded mb-1 truncate"
-            }
-          >
-            {event.title}
+          <div className="flex">
+            {event.tag === "friend" && (
+              <div
+                className={
+                  "material-icons-outlined -mr-1 " +
+                  iconColorMap700[event.label]
+                }
+              >
+                group
+              </div>
+            )}
+            {event.tag === "closeFriend" && (
+              <div
+                className={
+                  "material-icons-outlined -mr-1 " +
+                  iconColorMap700[event.label]
+                }
+              >
+                auto_awesome
+              </div>
+            )}
+            <div
+              key={index}
+              onClick={() => {
+                setSelectedEvent(event);
+              }}
+              className={
+                colorMap200[event.label] +
+                " p-1 ml-2 text-gray-600 text-sm rounded mb-1 truncate flex-grow"
+              }
+            >
+              {event.title}
+            </div>
           </div>
         ))}
       </div>

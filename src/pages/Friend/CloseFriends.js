@@ -98,7 +98,7 @@ function CloseFriends() {
               <img
                 src={friend.photoURL}
                 alt={friend.name}
-                referrerpolicy="no-referrer"
+                referrerPolicy="no-referrer"
                 className="w-10 h-10 rounded-full mr-4"
               />
               <span className="mr-4">{friend.name}</span>

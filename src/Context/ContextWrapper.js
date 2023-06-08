@@ -97,6 +97,7 @@ async function initFriendsEvents() {
                 return {
                   ...friendEvents[key],
                   id: key,
+                  tag: 'friend'
                 };
               });
             });
@@ -138,6 +139,7 @@ async function initCloseFriendEvents() {
                   return {
                     ...friendEvents[key],
                     id: key,
+                    tag: 'closeFriend' 
                   };
                 });
               });
@@ -209,7 +211,7 @@ export default function ContextWrapper(props) {
     return () => {
       setIsLoading(true); // set isLoading to true when the component unmounts
     };
-    }, []);
+  }, []);
   
   
   
@@ -232,7 +234,7 @@ export default function ContextWrapper(props) {
     return () => {
       setIsLoading(true); // set isLoading to true when the component unmounts
     };
-  }, []);
+  }, [showFriendsEvents, initialized, auth.currentUser]);
 
   // this useEffect will handle close friend events only
   useEffect(() => {
@@ -253,7 +255,7 @@ export default function ContextWrapper(props) {
     return () => {
       setIsLoading(true); // set isLoading to true when the component unmounts
     };
-  }, []);
+  }, [showCloseFriendEvents, initialized, auth.currentUser]);
 
   // Fetch User events
   useEffect(() => {
@@ -405,7 +407,7 @@ export default function ContextWrapper(props) {
         showCloseFriendEvents,
         setShowCloseFriendEvents,
         isCloseFriend, 
-        setIsCloseFriend
+        setIsCloseFriend,
       }}
     >
       {props.children}
