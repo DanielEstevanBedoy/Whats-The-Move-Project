@@ -13,7 +13,5 @@ export default function CreateEventButton() {
     >
       Create
     </button>
-
-
   );
 }

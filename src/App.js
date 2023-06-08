@@ -3,9 +3,8 @@ import React, { Component } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 //import logo from './assets/logo-color.png';
 
-import './App.css';
+// import './App.css';
 import logo from './assets/logo.png';
-import  './pages/Login/SignInPage.css';
 
 import Login from './pages/Login/login';
 

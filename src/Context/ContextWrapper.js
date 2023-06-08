@@ -103,6 +103,7 @@ async function initFriendsEvents() {
                 return {
                   ...friendEvents[key],
                   id: key,
+                  tag: 'friend'
                 };
               });
             });
@@ -144,6 +145,7 @@ async function initCloseFriendEvents() {
                   return {
                     ...friendEvents[key],
                     id: key,
+                    tag: 'closeFriend' 
                   };
                 });
               });
@@ -403,7 +405,7 @@ export default function ContextWrapper(props) {
         showCloseFriendEvents,
         setShowCloseFriendEvents,
         isCloseFriend, 
-        setIsCloseFriend
+        setIsCloseFriend,
       }}
     >
       {props.children}
