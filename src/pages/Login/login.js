@@ -1,7 +1,6 @@
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth, db } from "../../utils/firebase";
 import { ref, set, get } from "firebase/database";
-import "./SignInPage.css";
 import logo from "../../assets/message-icon.png";
 import image from "../../assets/GoogleLogo.png";
 
@@ -40,23 +39,23 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-blue-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <div>
-          <img className="mx-auto h-12 w-auto" src={logo} alt="logo" />
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-blue-500">
+        <div className="flex flex-col items-center">
+          <img className="h-16 w-auto" src={logo} alt="logo" />
+          <h2 className="mt-6 text-center text-4xl font-extrabold text-blue-500">
             WHATSTHEMOVE?
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Changing the world...
+          <p className="mt-4 text-center text-lg text-gray-600">
+            Making Every Moment Count
           </p>
         </div>
         <button
           onClick={GoogleLogin}
-          className="mt-5 group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="mt-6 group relative w-full flex justify-center py-3 px-6 border border-transparent text-lg font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
-          <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-            <img src={image} alt="Google Logo" className="h-5 w-5" />
+          <span className="absolute left-0 inset-y-0 flex items-center pl-4">
+            <img src={image} alt="Google Logo" className="h-8 w-8 ml-20" />
           </span>
-          Continue with Google
+          <span className="ml-2">Continue with Google</span>
         </button>
       </div>
     </div>
