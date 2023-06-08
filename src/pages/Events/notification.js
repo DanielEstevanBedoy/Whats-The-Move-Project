@@ -3,20 +3,20 @@ import GlobalContext from "../../Context/GlobalContext";
 import { auth } from "../../utils/firebase";
 
 function Notification() {
-  const { friendsEvents } = useContext(GlobalContext);
+  const { friendsEvents, closeFriendEvents } = useContext(GlobalContext);
   const [notifications, setNotifications] = useState([]);
   const [isVisible, setIsVisible] = useState(true);
+  const allEvents = [friendsEvents, closeFriendEvents];
   const currentUser = auth.currentUser;
 
   useEffect(() => {
-    if (currentUser && friendsEvents) {
+    if (currentUser && (friendsEvents||closeFriendEvents)) {
       const today = new Date();
       today.setHours(0, 0, 0, 0);  // set the time to 00:00:00
-
       const sevenDaysLater = new Date(today);
       sevenDaysLater.setDate(sevenDaysLater.getDate() + 7); // add 7 days to today
 
-      const notificationsList = friendsEvents
+      const notificationsList = [...friendsEvents,...closeFriendEvents] 
         .filter((event) => {
           // convert the Unix timestamp into a date object
           const eventDate = new Date(event.day);
@@ -34,7 +34,7 @@ function Notification() {
       setNotifications(notificationsList);
       setIsVisible(true);
     }
-  }, [currentUser, friendsEvents]);
+  }, [currentUser, friendsEvents, closeFriendEvents]);
 
   useEffect(() => {
     if (notifications.length) {
