@@ -60,6 +60,12 @@ export default function EventForm() {
 
   const formRef=useRef(null);
 
+  const handleClickOutside = (event) => {
+    if (formRef.current && !formRef.current.contains(event.target)) {
+      setShowEventForm(false);
+    }
+  };
+
   const handleKeyDown = (event) => {
     if (event.key ==="Enter") {
       event.preventDefault();
@@ -69,6 +75,12 @@ export default function EventForm() {
     }
   };
   
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  },[]);
 
   /*useEffect(() => {
     const handleKeyDown = (event) => {
@@ -189,8 +201,8 @@ export default function EventForm() {
         "h-screen w-full fixed top-0 flex items-center " + formPositionClasses
       }>
       
-      <form ref={formRef} className="bg-white rounded-lg shadow-2x w-1/4" onSubmit={handleSubmit}>
-        <header className="bg-gray-100 px-4 py-2 flex justify-between items-center">
+      <form ref={formRef} className="bg-white rounded-lg shadow-2x w-1/4" onSubmit={handleSubmit} >
+        <header className="bg-gray-100 px-4 py-2 flex justify-between items-center" >
           <span className="material-icons-outlined text-gray-400">
             drag_handle
           </span>
