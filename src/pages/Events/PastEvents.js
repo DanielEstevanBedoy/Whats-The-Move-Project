@@ -133,22 +133,25 @@ export default function PastEvents() {
 				     className="w-6/12 mb-2"
 				 />
 			     </div>
+			     
 			 ))}
-			<ImageUploadButton userID={event.userID} eventID={event.id} />
-		    </div>
+			 
+			 <ImageUploadButton event={event} />
+		     </div>
+		    
 		 ))}
 	    </div>
 	</div>
     );
 }
 
-function ImageUploadButton({ userID, eventID }) {
+function ImageUploadButton({ event }) {
     const [file, setFile] = useState(null);
     const [isUploading, setIsUploading] = useState(false);
 
     const handleChange = (e) => {
 	const selectedFile = e.target.files[0];
-	const allowedTypes = ['image/jpeg', 'image/png']; // Specify the allowed image file types
+	const allowedTypes = ['image/jpeg', 'image/png'];
 
 	if (selectedFile && allowedTypes.includes(selectedFile.type)) {
 	    setFile(selectedFile);
@@ -165,8 +168,8 @@ function ImageUploadButton({ userID, eventID }) {
 	    reader.readAsDataURL(file);
 	    reader.onloadend = async () => {
 		const base64String = reader.result.split(',')[1];
-		console.log('eventID: ', eventID);
-		const dbRef = ref(db, `Users/${userID}/Events/${eventID}/image`);
+		console.log('eventID: ', event.id);
+		const dbRef = ref(db, `Users/${event.userID}/Events/${event.id}/image`);
 		try {
 		    const snapshot = await get(dbRef);
 		    const images = snapshot.val() ? Object.values(snapshot.val()) : [];
@@ -187,11 +190,11 @@ function ImageUploadButton({ userID, eventID }) {
     
     return (
 	<div>
-	    <label htmlFor="file-upload" className="cursor-pointer bg-blue-500 transition-colors hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+	    <label htmlFor={`file-upload-${event.id}`} className="cursor-pointer bg-blue-500 transition-colors hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
 		{!file ? 'Choose Image' : ('Chosen: ' + file.name)}
 	    </label>
 	    <input
-		id="file-upload"
+		id={`file-upload-${event.id}`}
 		type="file"
 		accept="image/jpeg,image/png"
 		onChange={handleChange}
@@ -204,7 +207,7 @@ function ImageUploadButton({ userID, eventID }) {
 	    >
 		{!isUploading ? 'Upload Image' : 'Upload in Process'}
 	    </button>
-    </div>
-  );
+	</div>
+    );
 }
 
