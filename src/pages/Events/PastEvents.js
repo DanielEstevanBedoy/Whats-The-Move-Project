@@ -218,11 +218,11 @@ function ImageUploadButton({ event }) {
     
     return (
 	<div>
-	    <label htmlFor={`file-upload-${event.id}`} className="cursor-pointer bg-blue-500 transition-colors hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+	    <label htmlFor={`file-upload-${event.userID}-${event.id}`} className="cursor-pointer bg-blue-500 transition-colors hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
 		{!file ? 'Choose Image' : ('Chosen: ' + file.name)}
 	    </label>
 	    <input
-		id={`file-upload-${event.id}`}
+		id={`file-upload-${event.userID}-${event.id}`}
 		type="file"
 		accept="image/jpeg,image/png"
 		onChange={handleChange}
