@@ -118,39 +118,52 @@ async function initFriendsEvents() {
 async function initCloseFriendEvents() {
   if (auth.currentUser) {
     const userFriendsRef = ref(db, `Users/${auth.currentUser.uid}/friends`);
-    let parsedCloseFriendsEvents = [];
-    await get(userFriendsRef).then(async (snapshot) => {
+
+    let parsedCloseFriendEvents = [];
+    await get(userFriendsRef).then(async(snapshot) => {
       const friendsList = snapshot.val();
       if (friendsList) {
-        const closeFriendsEventsFetches = Object.keys(friendsList).map(
-          (friendId) => {
-            const closeFriendEventsRef = ref(db, `Users/${friendId}/Events`);
-            return get(closeFriendEventsRef).then((snapshot) => {
-              const closeFriendEvents = snapshot.val() || {};
-              return Object.keys(closeFriendEvents).filter(key => closeFriendEvents[key].visibility === 'Close Friends').map((key) => {
-                return {
-                  ...closeFriendEvents[key],
-                  id: key,
-                  tag: 'closeFriend'
-                };
+        const friendsEventsFetches = Object.keys(friendsList).map(
+          async (friendId) => {
+            const friendCloseFriendsRef = ref(db, `Users/${friendId}/closeFriends`);
+            const friendCloseFriendsSnapshot = await get(friendCloseFriendsRef);
+            const friendCloseFriends = friendCloseFriendsSnapshot.val() || {};
+
+            if (friendCloseFriends.hasOwnProperty(auth.currentUser.uid)) {
+              // If the current user is a close friend, fetch the friend's events
+              const friendEventsRef = ref(db, `Users/${friendId}/Events`);
+              return get(friendEventsRef).then((snapshot) => {
+                const friendEvents = snapshot.val() || {};
+                // Only fetch events where visibility is set to 'Close Friends'
+                return Object.keys(friendEvents).filter(key => friendEvents[key].visibility === 'Close Friends').map(key => {
+                  return {
+                    ...friendEvents[key],
+                    id: key,
+                    tag: 'closeFriend' 
+                  };
+                });
               });
-            });
+            } else {
+              // If the current user is not a close friend, don't fetch any events
+              return [];
+            }
           }
         );
-        const closeFriendsEventsArrays = await Promise.all(closeFriendsEventsFetches);
-        const combinedCloseFriendsEvents = [].concat(...closeFriendsEventsArrays);
-        parsedCloseFriendsEvents = combinedCloseFriendsEvents;
+
+        const friendsEventsArrays = await Promise.all(friendsEventsFetches);
+        const combinedFriendsEvents = [].concat(...friendsEventsArrays);
+        parsedCloseFriendEvents = combinedFriendsEvents;
       }
     });
 
-    // Close friends events
-    return parsedCloseFriendsEvents;
+    // Friends events
+    return parsedCloseFriendEvents;
+
   } else {
     console.log("No user is signed in");
     return [];
   }
 }
-
 
 
 
@@ -254,8 +267,6 @@ export default function ContextWrapper(props) {
       });
     }
   }, [savedEvents, initialized]);
-
-  
 
   useEffect(() => {
       if (!showEventForm) {
@@ -403,3 +414,5 @@ export default function ContextWrapper(props) {
     </GlobalContext.Provider>
   );
 }
+
+

@@ -14,7 +14,7 @@ import {
 } from "react-router-dom";
 import "./dashboard.css";
 import Login from "../pages/Login/login";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Notification from "../pages/Events/notification";
 
 
@@ -38,11 +38,18 @@ export default function Dashboard() {
   const [user, loading] = useAuthState(auth);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [eventsDropdownOpen, setEventsDropdownOpen] = useState(false);
+  
+  const [redirectToCalendar, setRedirectToCalendar] = useState(false);
+
+  useEffect (() => {
+    if (user) {
+      setRedirectToCalendar(true)
+    }
+  },[user]);
 
 
   const handleDropdownClick = () => setDropdownOpen(!dropdownOpen);
-  const handleEventsDropdownClick = () =>
-    setEventsDropdownOpen(!eventsDropdownOpen);
+  const handleEventsDropdownClick = () => setEventsDropdownOpen(!eventsDropdownOpen);
   const closeEventsDropdown = () => setEventsDropdownOpen(false);
 
 
@@ -52,12 +59,17 @@ export default function Dashboard() {
         <Notification/>
         <div className="bg-white shadow px-6 py-4 flex justify-between items-center">
           <div className="flex space-x-4">
+            {redirectToCalendar ? (
+              
             <Link
-              to="/CalendarPage"
+              to="/"
               className="text-gray-700 hover:text-blue-500 transition duration-150"
             >
               Calendar
             </Link>
+            ) : (
+              <span className="text-gray-700">Calendar</span> 
+            )}
             <Link
               to="/Friends"
               className="text-gray-700 hover:text-blue-500 transition duration-150"
@@ -125,7 +137,8 @@ export default function Dashboard() {
           </div>
         </div>
         <Routes>
-          <Route path="/CalendarPage" element={<CalendarPage />} />
+          {redirectToCalendar && <Route path="/" element={<CalendarPage />} />}
+          
           <Route path="/Friends" element={<Friends />} />
           <Route path="/PastEvents/*" element={<PastEvents/>} />
 	        <Route path="/FutureEvents/*" element={<FutureEvents/>} />
