@@ -62,43 +62,6 @@ export default function PastEvents() {
 	setSortedEvents(events);
     }, [day.format("YYYYMMDD"), auth.currentUser, savedEvents]);
     
-    const [file, setFile] = useState(null);
-    
-    function handleChange(e) {
-        const selectedFile = e.target.files[0];
-	const allowedTypes = ["image/jpeg", "image/png"]; // Specify the allowed image file types
-
-	if (selectedFile && allowedTypes.includes(selectedFile.type)) {
-	    setFile(selectedFile);
-	} else {
-	    setFile(null);
-	    alert("Please select a valid image file (JPEG or PNG).");
-	}
-    }
-
-    const handleImageUpload = async (userID, eventID) => {
-	if (file) {
-	    const reader = new FileReader();
-	    reader.readAsDataURL(file);
-	    reader.onloadend = async () => {
-		const base64String = reader.result.split(',')[1];
-		console.log("eventID: ", eventID);
-		const dbRef = ref(db, `Users/${userID}/Events/${eventID}/image`);
-		try {
-		    const snapshot = await get(dbRef);
-		    const images = snapshot.val() ? Object.values(snapshot.val()) : [];
-		    images.push(base64String);
-		    await set(dbRef, images);
-		    console.log('Image uploaded successfully!');
-		    window.location.reload(true);
-		} catch(error) {
-		    console.log("Error adding attribute: ", error);
-		}
-	    };
-	} else {
-	    alert("Please upload an image file");
-	}
-    };
 
     const b64toBlob = (b64Data, contentType = '', sliceSize = 512) => {
 	if (b64Data) {
@@ -171,14 +134,77 @@ export default function PastEvents() {
 				 />
 			     </div>
 			 ))}
-			<div>
-			    <input type="file" onChange={(e) => handleChange(e)} />
-			    <button onClick={() => handleImageUpload(event.userID, event.id)}>Upload Image</button>
-			</div>
+			<ImageUploadButton userID={event.userID} eventID={event.id} />
 		    </div>
 		 ))}
 	    </div>
 	</div>
     );
+}
+
+function ImageUploadButton({ userID, eventID }) {
+    const [file, setFile] = useState(null);
+    const [isUploading, setIsUploading] = useState(false);
+
+    const handleChange = (e) => {
+	const selectedFile = e.target.files[0];
+	const allowedTypes = ['image/jpeg', 'image/png']; // Specify the allowed image file types
+
+	if (selectedFile && allowedTypes.includes(selectedFile.type)) {
+	    setFile(selectedFile);
+	} else {
+	    setFile(null);
+	    alert('Please select a valid image file (JPEG or PNG).');
+	}
+    };
+    
+    const handleImageUpload = async () => {
+	if (file) {
+	    setIsUploading(true);
+	    const reader = new FileReader();
+	    reader.readAsDataURL(file);
+	    reader.onloadend = async () => {
+		const base64String = reader.result.split(',')[1];
+		console.log('eventID: ', eventID);
+		const dbRef = ref(db, `Users/${userID}/Events/${eventID}/image`);
+		try {
+		    const snapshot = await get(dbRef);
+		    const images = snapshot.val() ? Object.values(snapshot.val()) : [];
+		    images.push(base64String);
+		    await set(dbRef, images);
+		    console.log('Image uploaded successfully!');
+		    setIsUploading(false);
+		    window.location.reload(true);
+		} catch (error) {
+		    setIsUploading(false);
+		    console.log('Error adding attribute: ', error);
+		}
+	    };
+	} else {
+	    alert('Please upload an image file');
+	}
+    };
+    
+    return (
+	<div>
+	    <label htmlFor="file-upload" className="cursor-pointer bg-blue-500 transition-colors hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+		{!file ? 'Choose Image' : ('Chosen: ' + file.name)}
+	    </label>
+	    <input
+		id="file-upload"
+		type="file"
+		accept="image/jpeg,image/png"
+		onChange={handleChange}
+		className="hidden"
+	    />
+	    <button
+		onClick={handleImageUpload}
+		disabled={isUploading}
+		className={`bg-white-500 hover:text-blue-500 text-black py-2 px-4 transition-colors rounded ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+	    >
+		{!isUploading ? 'Upload Image' : 'Upload in Process'}
+	    </button>
+    </div>
+  );
 }
 
