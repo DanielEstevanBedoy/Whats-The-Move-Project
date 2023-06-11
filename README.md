@@ -33,3 +33,25 @@ The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+## How to Use
+
+Calendar
+- navigate calendar using arrows, reset by clicking today
+- create events by clicking on a day of choice and fill in title, description, label color, and visibility
+- private events are not visibile to anyone else
+- public events are visible to all friends
+- close friends events are only visible to close friends
+
+Friends
+- send friend requests by entering email address associated with the account
+- accept/decline incoming friend requests
+- add friends from friends list to close friends list 
+- remove friends from friends list, even if they are in your close friend list
+
+Upcoming Events
+- see all upcoming events and search by username, date
+
+Past Events
+- see all passed events and search by username, date 
+- upload image(s) to past events to save memmories 
