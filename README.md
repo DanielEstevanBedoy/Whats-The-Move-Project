@@ -4,11 +4,12 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 Before starting, make sure to download Node.js which can be downloaded here: https://nodejs.org/en/download
 
-To install all packages in order to run our application, run npm i or npm install in the terminal.
-
 ## Available Scripts
 
 In the project directory, you can run:
+
+### `npm i` or `npm install`
+To install all packages in order to run our application
 
 ### `npm start`
 
