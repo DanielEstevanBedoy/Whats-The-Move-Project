@@ -13,6 +13,29 @@ export default function PastEvents() {
 
   const day = dayjs();
 
+  const handleImageRemoval = async (eventID, imageIndex) => {
+    const dbRef = ref (
+      db,
+      `Users/${auth.currentUser.uid}/Events/${eventID}/image`
+    );
+    try {
+      const snapshot = await get(dbRef);
+      const images = snapshot.val() ? Object.values(snapshot.val()) : [];
+      images.splice(imageIndex, 1);
+      await set(dbRef, images);
+      console.log("Image removed successfully!");
+      setSavedEvents((prevEvents) => 
+      prevEvents.map((event) => 
+      event.id === eventID ? { ...event, image: images } : event));
+  
+    } catch (error) {
+      console.log("Error removing image: ", error);
+     
+    }
+  };
+
+
+
   useEffect(() => {
     const fetchData = async () => {
       const fetch = async () => {
@@ -157,12 +180,18 @@ export default function PastEvents() {
               </p>
               {event.image &&
                 event.image.map((image, i) => (
-                  <div key={i}>
+                  <div key={i} className="flex items-center">
                     <img
                       src={URL.createObjectURL(b64toBlob(image, "image/jpeg"))}
                       alt=""
                       className="w-6/12 mb-2"
                     />
+                    <button 
+                    onClick={() => handleImageRemoval(event.id, i)}
+                    className="text-red-500 ml-2"
+                    >
+                      Remove
+                    </button>
                   </div>
                 ))}
 		<ImageUploadButton event={event}  />
