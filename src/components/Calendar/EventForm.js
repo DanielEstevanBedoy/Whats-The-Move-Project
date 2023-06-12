@@ -73,6 +73,9 @@ export default function EventForm() {
       //handleSubmit(event);
       submitButton.click();
     }
+    else if (event.key === "Delete") {
+      setShowEventForm(false);
+    }
   };
   
   useEffect(() => {
